@@ -1,4 +1,4 @@
-package com.calculadoravet
+package com.cfranceschini00.calculadoraVet
 
 import android.app.Application
 import android.content.res.Configuration

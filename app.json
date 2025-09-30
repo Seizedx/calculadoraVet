@@ -1,7 +1,16 @@
 {
   "expo": {
     "name": "calculadoraVet",
-    "slug": "calculadoraVet",
-    "version": "1.0.0"
+    "slug": "calculadora-Vet",
+    "version": "0.0.3",
+    "extra": {
+      "eas": {
+        "projectId": "25c4051b-1993-425a-9322-f0b30ac21a04"
+      }
+    },
+    "owner": "cfranceschini00",
+    "android": {
+      "package": "com.cfranceschini00.calculadoraVet"
+    }
   }
 }

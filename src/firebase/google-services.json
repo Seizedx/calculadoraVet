@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "326002484207",
+    "project_id": "calculadoravet-2f4e5",
+    "storage_bucket": "calculadoravet-2f4e5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:326002484207:android:49fdef14c07767400d0c1a",
+        "android_client_info": {
+          "package_name": "com.cfranceschini00.calculadoraVet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTIbr_QQLG2s2W_SzzmU3Sh87gqxbDBDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

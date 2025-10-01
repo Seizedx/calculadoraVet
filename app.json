@@ -10,7 +10,20 @@
     },
     "owner": "cfranceschini00",
     "android": {
+      "googleServicesFile": "./src/firebase/google-services.json",
       "package": "com.cfranceschini00.calculadoraVet"
-    }
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ]
   }
 }

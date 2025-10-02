@@ -6,7 +6,8 @@ import {
     View,
     TouchableOpacity,
     Dimensions,
-    ScrollView
+    ScrollView,
+    Image,
 } from 'react-native';
 import {
     User,
@@ -135,7 +136,19 @@ const LoginScreen = () => {
                         >
                             <Text style={[styles.optionsText, { color: currentTheme.color }]}>Não está cadastrado? Cadastrar.</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.googleSignInArea, {borderColor: currentTheme.color}]}
+                            activeOpacity={0.3}
+                            onPress={() => console.log('Google Sign In Button Pressed')}
+                        >
+                            <Image 
+                                source={require('../../../src/images/googleLogo.png')}
+                                style={styles.googleSignInImg}
+                            />
+                            <Text style={[styles.googleSingInText, { color: currentTheme.color }]}>Entrar com o Google</Text>
+                        </TouchableOpacity>
                     </View>
+                    <View style={{ marginBottom: 50 }}></View>
                 </View>
             </ScrollView>
         </View>
@@ -227,6 +240,24 @@ const styles = StyleSheet.create({
     optionsText: {
         fontSize: 13,
     },
+    googleSignInArea: {
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderRadius: 30,
+        gap: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+    },
+    googleSignInImg: {
+        height: 30,
+        width: 30,
+    },
+    googleSingInText: {
+        fontSize: 15,
+    }
 });
 
 export default LoginScreen;

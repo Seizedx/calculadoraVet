@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "326002484207",
-    "project_id": "calculadoravet-2f4e5",
-    "storage_bucket": "calculadoravet-2f4e5.firebasestorage.app"
+    "project_number": "515897975479",
+    "project_id": "calculadora-vet-95530",
+    "storage_bucket": "calculadora-vet-95530.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:326002484207:android:7ed47344ea24c32c0d0c1a",
+        "mobilesdk_app_id": "1:515897975479:android:e711c0cf04ae9eeb052332",
         "android_client_info": {
           "package_name": "com.cfranceschini00.calculadoraVet"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "515897975479-poeepj2k9q831dg9vo8gpncn49qvtf2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBTIbr_QQLG2s2W_SzzmU3Sh87gqxbDBDo"
+          "current_key": "AIzaSyCNa_dIML8cuS7MlL8rtRm7S3OCdnT3RfQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515897975479-poeepj2k9q831dg9vo8gpncn49qvtf2a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

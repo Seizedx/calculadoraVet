@@ -29,7 +29,7 @@ const LoginScreen = () => {
     const [inputEmail, setInputEmail] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const navigation = useNavigation();
-    const { loginUser, authUser } = useAuth();
+    const { loginUser, authUser, loginWithGoogle } = useAuth();
 
     async function loginUserButton() {
         try {
@@ -139,7 +139,7 @@ const LoginScreen = () => {
                         <TouchableOpacity
                             style={[styles.googleSignInArea, {borderColor: currentTheme.color}]}
                             activeOpacity={0.3}
-                            onPress={() => console.log('Google Sign In Button Pressed')}
+                            onPress={loginWithGoogle}
                         >
                             <Image 
                                 source={require('../../../src/images/googleLogo.png')}

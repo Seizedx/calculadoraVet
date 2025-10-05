@@ -8,7 +8,7 @@ const LoadingComponent = () => {
     return (
         <View style={styles.loadingView}>
             <ActivityIndicator
-                color='#ffffff'
+                color='#ffffff6e'
                 backgroundColor='transparent'
                 size={'large'}
                 style={styles.loading}
@@ -18,7 +18,7 @@ const LoadingComponent = () => {
 }
 const styles = StyleSheet.create({
     loadingView: {
-      backgroundColor: '#000000',
+      backgroundColor: 'transparent',
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',

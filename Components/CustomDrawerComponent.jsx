@@ -19,7 +19,6 @@ import {
 import { useTheme, ThemeSwitch } from '../Components/ThemeComponent';
 import { useNavigation } from '@react-navigation/native';
 const { width, height } = Dimensions.get('window');
-// import { useAuthState } from './AuthComponent';
 import { useAuth } from './AuthComponent';
 import { LinearGradient } from 'expo-linear-gradient';
 const CustomDrawer = (props) => {
@@ -63,7 +62,7 @@ const CustomDrawer = (props) => {
                     ) : (
                         <View style={styles.drawerLoginButtons}>
                             <Text style={[styles.drawerLoginText, { color: currentTheme.color }]}>Usuário Atual:</Text>
-                            <Text style={[styles.drawerLoginText1, { color: currentTheme.color }]}>{authUser?.displayName}</Text>
+                            <Text style={[styles.drawerLoginText1, { color: currentTheme.color }]}>{authUser?.email && authUser?.displayName ? authUser?.displayName : authUser?.email}</Text>
                             <TouchableOpacity
                                 style={[styles.buttonZone, { backgroundColor: currentTheme.buttonColor }]}
                                 activeOpacity={0.3}

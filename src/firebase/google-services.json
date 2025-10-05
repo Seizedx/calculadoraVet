@@ -7,14 +7,30 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:515897975479:android:e711c0cf04ae9eeb052332",
+        "mobilesdk_app_id": "1:515897975479:android:fe761e8356e5721d052332",
         "android_client_info": {
           "package_name": "com.cfranceschini00.calculadoraVet"
         }
       },
       "oauth_client": [
         {
-          "client_id": "515897975479-poeepj2k9q831dg9vo8gpncn49qvtf2a.apps.googleusercontent.com",
+          "client_id": "515897975479-40qs3kv0gm57u1828lqnd75sbvh7nbnk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cfranceschini00.calculadoraVet",
+            "certificate_hash": "e1f684a218866237db73d165ff1410813e6c56b0"
+          }
+        },
+        {
+          "client_id": "515897975479-m251q1ok7g44begj47qbil5hleosmo23.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cfranceschini00.calculadoraVet",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "515897975479-jdiko7cjcjil9u513q2b5p4ttuc2p440.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,7 +43,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "515897975479-poeepj2k9q831dg9vo8gpncn49qvtf2a.apps.googleusercontent.com",
+              "client_id": "515897975479-jdiko7cjcjil9u513q2b5p4ttuc2p440.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

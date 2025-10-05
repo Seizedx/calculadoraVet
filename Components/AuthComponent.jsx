@@ -1,30 +1,37 @@
 import { useState, useEffect, useContext, createContext } from 'react';
 import { Alert } from 'react-native';
-
 import {
     getAuth,
     onAuthStateChanged,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     sendPasswordResetEmail,
-    signOut
+    signOut,
+    GoogleAuthProvider,
+    signInWithCredential,
 } from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { resetToRoute } from './NavigationComponent';
+
+GoogleSignin.configure({
+    webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
+    offlineAccess: true,
+});
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [authUser, setAuthUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // obtém instância do auth (modular)
     const auth = getAuth();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setAuthUser({
-                    email: user.email,
                     uid: user.uid,
+                    email: user.email,
+                    name: user.displayName || '',
                 });
             } else {
                 setAuthUser(null);
@@ -38,126 +45,15 @@ export const AuthProvider = ({ children }) => {
     const awaitAlert = (title, message) => {
         return new Promise((resolve) => {
             Alert.alert(title, message, [
-                {
-                    text: 'OK',
-                    onPress: () => resolve(true),
-                },
+                { text: 'OK', onPress: () => resolve(true) },
             ]);
-        });
-    };
-
-    const createUser = async (inputEmail, inputPassword) => {
-        if (!inputEmail) {
-            Alert.alert('E-mail faltando!', 'Por favor, insira seu endereço de e-mail.');
-            return false;
-        }
-        if (!inputPassword) {
-            Alert.alert('Senha faltando!', 'Por favor, insira uma senha.');
-            return false;
-        }
-        if (inputPassword.length < 6) {
-            Alert.alert('Senha fraca!', 'A senha deve ter pelo menos 6 caracteres.');
-            return false;
-        }
-
-        try {
-            await createUserWithEmailAndPassword(auth, inputEmail, inputPassword);
-
-            // depois de criar, desloga
-            await signOut(auth);
-            setAuthUser(null);
-
-            await awaitAlert('Usuário registrado.', 'Você agora pode fazer login e gerenciar sua conta.');
-            return true;
-        } catch (error) {
-            console.log('ERRO AO CRIAR USUÁRIO:', error.code, error.message);
-            handleAuthErrors(error);
-            return false;
-        }
-    };
-
-    const loginUser = async (inputEmail, inputPassword) => {
-        if (!inputEmail) {
-            Alert.alert('E-mail faltando.', 'Por favor, insira seu endereço de e-mail.');
-            return false;
-        }
-        if (!inputPassword) {
-            Alert.alert('Senha faltando.', 'Por favor, insira sua senha.');
-            return false;
-        }
-
-        try {
-            const userCredential = await signInWithEmailAndPassword(auth, inputEmail, inputPassword);
-            const user = userCredential.user;
-            setAuthUser({
-                email: user.email,
-                uid: user.uid,
-            });
-            await awaitAlert('Usuário conectado!', 'Você agora pode gerenciar sua conta.');
-            return true;
-        } catch (error) {
-            handleAuthErrors(error);
-            return false;
-        }
-    };
-
-    const logoutUser = async () => {
-        if (!auth.currentUser) {
-            Alert.alert('Nenhum usuário conectado.', 'Você já está desconectado.');
-            return false;
-        }
-        try {
-            await signOut(auth);
-            setAuthUser(null);
-            Alert.alert('Usuário desconectado.', 'Você foi desconectado com sucesso.');
-            return true;
-        } catch (error) {
-            handleAuthErrors(error);
-            return false;
-        }
-    };
-
-    const forgotPassword = async (inputEmail) => {
-        if (!inputEmail) {
-            Alert.alert('E-mail inválido.', 'Por favor, insira um endereço de e-mail para redefinir sua senha.');
-            return false;
-        }
-
-        return new Promise((resolve) => {
-            Alert.alert(
-                'Redefinir senha.',
-                `Deseja redefinir senha do email ${inputEmail}?`,
-                [
-                    {
-                        text: 'Não',
-                        style: 'cancel',
-                        onPress: () => resolve(false),
-                    },
-                    {
-                        text: 'Sim',
-                        onPress: async () => {
-                            try {
-                                await sendPasswordResetEmail(auth, inputEmail);
-                                await awaitAlert(
-                                    'E-mail enviado.',
-                                    'Enviamos um link de redefinição de senha para o e-mail informado.'
-                                );
-                                resolve(true);
-                            } catch (error) {
-                                handleAuthErrors(error);
-                                resolve(false);
-                            }
-                        },
-                    },
-                ]
-            );
         });
     };
 
     const handleAuthErrors = (error) => {
         switch (error.code) {
             case 'auth/invalid-email':
-                Alert.alert('E-mail inválido.', 'Por favor, forneça um endereço de e-mail válido.');
+                Alert.alert('E-mail inválido.', 'Forneça um endereço de e-mail válido.');
                 break;
             case 'auth/email-already-in-use':
                 Alert.alert('E-mail em uso.', 'Este e-mail já está registrado. Tente outro.');
@@ -172,7 +68,7 @@ export const AuthProvider = ({ children }) => {
                 Alert.alert('Erro de rede.', 'Verifique sua conexão com a internet.');
                 break;
             case 'auth/operation-not-allowed':
-                Alert.alert('Operação não permitida.', 'O registro com e-mail/senha está desativado.');
+                Alert.alert('Operação não permitida.', 'Registro com e-mail/senha desativado.');
                 break;
             case 'auth/invalid-credential':
                 Alert.alert('Credenciais inválidas.', 'As credenciais fornecidas estão incorretas.');
@@ -196,6 +92,167 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const createUser = async (email, password) => {
+        if (!email) {
+            Alert.alert('E-mail faltando!', 'Insira seu endereço de e-mail.');
+            return false;
+        }
+        if (!password) {
+            Alert.alert('Senha faltando!', 'Insira sua senha.');
+            return false;
+        }
+        if (password.length < 6) {
+            Alert.alert('Senha fraca!', 'A senha deve ter pelo menos 6 caracteres.');
+            return false;
+        }
+
+        try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            await signOut(auth);
+            setAuthUser(null);
+            await awaitAlert('Usuário registrado.', 'Você agora pode fazer login e gerenciar sua conta.');
+            return true;
+        } catch (error) {
+            console.log('Erro criar usuário:', error);
+            handleAuthErrors(error);
+            return false;
+        }
+    };
+
+    const loginUser = async (email, password) => {
+        if (!email) {
+            Alert.alert('E-mail faltando.', 'Insira seu endereço de e-mail.');
+            return false;
+        }
+        if (!password) {
+            Alert.alert('Senha faltando.', 'Insira sua senha.');
+            return false;
+        }
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            setAuthUser({
+                uid: user.uid,
+                email: user.email,
+                name: user.displayName || '',
+            });
+
+            await awaitAlert('Usuário conectado!', 'Você agora pode gerenciar sua conta.');
+            setTimeout(() => resetToRoute('Home'), 100);
+            return true;
+
+        } catch (error) {
+            handleAuthErrors(error);
+            return false;
+
+        } finally {
+            console.log('Login Auth Funcionou');
+        }
+    };
+
+    const loginWithGoogle = async () => {
+        try {
+            await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+            const response = await GoogleSignin.signIn();
+
+            if (!response?.data?.idToken) {
+                console.error('Falha ao obter ID Token do Google', response);
+                return false;
+            }
+
+            const credential = GoogleAuthProvider.credential(response.data.idToken);
+            const userCredential = await signInWithCredential(auth, credential);
+            const user = userCredential.user;
+
+            setAuthUser({
+                uid: user.uid,
+                email: user.email,
+                name: user.displayName || '',
+            });
+
+            await awaitAlert('Usuário conectado!', 'Você agora pode gerenciar sua conta.');
+            setTimeout(() => resetToRoute('Home'), 100);
+            return true;
+
+        } catch (error) {
+            switch (error.code) {
+                case 'SIGN_IN_CANCELLED':
+                    Alert.alert('Login cancelado pelo usuário.');
+                    break;
+                case 'IN_PROGRESS':
+                    Alert.alert('Login já em andamento.');
+                    break;
+                case 'PLAY_SERVICES_NOT_AVAILABLE':
+                    Alert.alert('Google Play Services não disponível ou desatualizado.');
+                    break;
+                case 'DEVELOPER_ERROR':
+                    Alert.alert('Erro de configuração.', 'Verifique Web Client ID e SHA-1 no Firebase.');
+                    break;
+                default:
+                    console.log('Erro login Google:', error);
+                    Alert.alert('Erro no login com Google', error.message || 'Algo deu errado.');
+                    break;
+            }
+            return false;
+        } finally {
+            console.log('Login Google Funcionou');
+        }
+    };
+
+    const logoutUser = async () => {
+        if (!auth.currentUser) {
+            Alert.alert('Nenhum usuário conectado.', 'Você já está desconectado.');
+            return false;
+        }
+        try {
+            await signOut(auth);
+            setAuthUser(null);
+
+            await GoogleSignin.signOut();
+
+            Alert.alert('Usuário desconectado.', 'Você foi desconectado com sucesso.');
+            return true;
+        } catch (error) {
+            handleAuthErrors(error);
+            return false;
+        }
+    };
+
+    const forgotPassword = async (email) => {
+        if (!email) {
+            Alert.alert('E-mail inválido.', 'Insira um endereço de e-mail para redefinir sua senha.');
+            return false;
+        }
+
+        return new Promise((resolve) => {
+            Alert.alert(
+                'Redefinir senha.',
+                `Deseja redefinir senha do email ${email}?`,
+                [
+                    { text: 'Não', style: 'cancel', onPress: () => resolve(false) },
+                    {
+                        text: 'Sim',
+                        onPress: async () => {
+                            try {
+                                await sendPasswordResetEmail(auth, email);
+                                await awaitAlert(
+                                    'E-mail enviado.',
+                                    'Um link de redefinição de senha foi enviado para o e-mail informado.'
+                                );
+                                resolve(true);
+                            } catch (error) {
+                                handleAuthErrors(error);
+                                resolve(false);
+                            }
+                        },
+                    },
+                ]
+            );
+        });
+    };
+
     return (
         <AuthContext.Provider
             value={{
@@ -203,6 +260,7 @@ export const AuthProvider = ({ children }) => {
                 loading,
                 createUser,
                 loginUser,
+                loginWithGoogle,
                 logoutUser,
                 forgotPassword,
             }}

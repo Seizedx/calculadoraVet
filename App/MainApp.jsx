@@ -11,7 +11,7 @@ import { CalculatorsStack } from './Screens/Calculators/CalculatorStack';
 import { PlateletCountStack } from './Screens/PlateletCount/PlateletCountStack';
 import { HistoryStack } from './Screens/History/HistoryStack';
 
-
+import { setNavigator } from '../Components/NavigationComponent';
 import TopBarPatientSearchComponent from '../Components/TopBarPatientSearchComponent';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
@@ -22,7 +22,7 @@ const MainApp = () => {
     const { currentTheme } = useTheme();
 
     return (
-        <NavigationContainer>
+        <NavigationContainer ref={setNavigator}>
             <Drawer.Navigator
                 drawerContent={CustomDrawer}
                 initialRouteName="Home"

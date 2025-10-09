@@ -9,6 +9,8 @@ import Library from './Screens/Library';
 import { LoginStack } from './Screens/Authentication/LoginStack';
 import { CalculatorsStack } from './Screens/Calculators/CalculatorStack';
 import { PlateletCountStack } from './Screens/PlateletCount/PlateletCountStack';
+import { HematologicalIndices } from './Screens/HematologicalIndices/HematologicalIndices';
+import { WhiteBloodCellCount } from './Screens/WhiteBloodCellCount/WhiteBloodCellCount';
 import { HistoryStack } from './Screens/History/HistoryStack';
 
 import { setNavigator } from '../Components/NavigationComponent';
@@ -133,6 +135,28 @@ const MainApp = () => {
                     }}
                 />
                 <Drawer.Screen
+                    name="HematologicalIndices"
+                    component={HematologicalIndices}
+                    options={{
+                        //drawerItemStyle: { display: 'none' },
+                    }}
+                    initialParams={{
+                        title: 'Índices Hematológicos',
+                        search: false,
+                    }}
+                />
+                <Drawer.Screen
+                    name="WhiteBloodCellCount"
+                    component={WhiteBloodCellCount}
+                    options={{
+                        //drawerItemStyle: { display: 'none' },
+                    }}
+                    initialParams={{
+                        title: 'Leucograma',
+                        search: false,
+                    }}
+                />
+                <Drawer.Screen
                     name="HistoryStack"
                     component={HistoryStack}
                     options={{
@@ -147,7 +171,7 @@ const MainApp = () => {
                     name="TopBarPatientSearchComponent"
                     component={TopBarPatientSearchComponent}
                     options={{
-                        // drawerItemStyle: { display: 'none' },
+                        drawerItemStyle: { display: 'none' },
                     }}
                     initialParams={{
                         title: 'Pesquisar',

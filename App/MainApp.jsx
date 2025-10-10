@@ -2,7 +2,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import 'react-native-gesture-handler';
 import { useTheme } from '../Components/ThemeComponent';
 import CustomDrawer from '../Components/CustomDrawerComponent';
-import Home from './Screens/Home';
+import HomeScreen from './Screens/HomeScreen';
 import About from './Screens/About';
 import Library from './Screens/Library';
 
@@ -11,11 +11,12 @@ import { CalculatorsStack } from './Screens/Calculators/CalculatorStack';
 import { PlateletCountStack } from './Screens/PlateletCount/PlateletCountStack';
 import { HematologicalIndices } from './Screens/HematologicalIndices/HematologicalIndices';
 import { WhiteBloodCellCount } from './Screens/WhiteBloodCellCount/WhiteBloodCellCount';
+import { CompleteBloodCount } from './Screens/CompleteBloodCount/CompleteBloodCount';
 import { HistoryStack } from './Screens/History/HistoryStack';
 
 import { setNavigator } from '../Components/NavigationComponent';
 import TopBarPatientSearchComponent from '../Components/TopBarPatientSearchComponent';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Home, Info, BookOpen } from 'lucide-react-native';
 import { NavigationContainer } from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
@@ -27,7 +28,7 @@ const MainApp = () => {
         <NavigationContainer ref={setNavigator}>
             <Drawer.Navigator
                 drawerContent={CustomDrawer}
-                initialRouteName="Home"
+                initialRouteName="HomeScreen"
                 screenOptions={{
                     headerShown: false,
                     drawerStyle: {
@@ -48,15 +49,15 @@ const MainApp = () => {
                 }}
             >
                 <Drawer.Screen
-                    name="Home"
-                    component={Home}
+                    name="HomeScreen"
+                    component={HomeScreen}
                     options={{
                         title: 'Início',
                         drawerIcon: () => (
-                            <MaterialCommunityIcons
-                                name="home-outline"
+                            <Home
                                 color={currentTheme.color}
                                 size={currentTheme.size}
+                                strokeWidth={2}
                             />
                         ),
                     }}
@@ -71,10 +72,10 @@ const MainApp = () => {
                     options={{
                         title: 'Sobre',
                         drawerIcon: () => (
-                            <MaterialCommunityIcons
-                                name="information-outline"
+                            <Info
                                 color={currentTheme.color}
                                 size={currentTheme.size}
+                                strokeWidth={2}
                             />
                         ),
                     }}
@@ -89,10 +90,10 @@ const MainApp = () => {
                     options={{
                         title: 'Biblioteca',
                         drawerIcon: () => (
-                            <MaterialCommunityIcons
-                                name="notebook-outline"
+                            <BookOpen
                                 color={currentTheme.color}
                                 size={currentTheme.size}
+                                strokeWidth={2}
                             />
                         ),
                     }}
@@ -138,7 +139,7 @@ const MainApp = () => {
                     name="HematologicalIndices"
                     component={HematologicalIndices}
                     options={{
-                        //drawerItemStyle: { display: 'none' },
+                        drawerItemStyle: { display: 'none' },
                     }}
                     initialParams={{
                         title: 'Índices Hematológicos',
@@ -149,10 +150,21 @@ const MainApp = () => {
                     name="WhiteBloodCellCount"
                     component={WhiteBloodCellCount}
                     options={{
-                        //drawerItemStyle: { display: 'none' },
+                        drawerItemStyle: { display: 'none' },
                     }}
                     initialParams={{
                         title: 'Leucograma',
+                        search: false,
+                    }}
+                />
+                <Drawer.Screen
+                    name="CompleteBloodCount"
+                    component={CompleteBloodCount}
+                    options={{
+                        drawerItemStyle: { display: 'none' },
+                    }}
+                    initialParams={{
+                        title: 'Hemograma Completo',
                         search: false,
                     }}
                 />

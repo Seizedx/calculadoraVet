@@ -341,8 +341,6 @@ export const WhiteBloodCellCount = () => {
                         </View>
                     )}
                 </View>
-
-                <QuickActionsContainer />
             </ScrollView>
         </View>
     );

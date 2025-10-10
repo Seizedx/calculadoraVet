@@ -18,7 +18,7 @@ import QuickActionsComponent from '../../Components/QuickActionsComponent';
 import { useTheme } from '../../Components/ThemeComponent';
 import { useNavigation } from '@react-navigation/native';
 
-export const Home = () => {
+export const HomeScreen = () => {
     const { currentTheme, actualTheme } = useTheme();
     const navigation = useNavigation();
 
@@ -38,7 +38,7 @@ export const Home = () => {
         try {
             if (typeof route !== 'string' || !route) {
                 await awaitAlert('Erro', 'Rota inválida fornecida.');
-                navigation.navigate('Home');
+                navigation.navigate('HomeScreen');
                 return true;
             }
 
@@ -52,7 +52,7 @@ export const Home = () => {
                 );
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: 'Home' }], ////////////caso queira ir para outra tela
+                    routes: [{ name: 'Screen' }], ////////////caso queira ir para outra tela
                 });
                 return true;
             }
@@ -236,4 +236,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Home;
+export default HomeScreen;

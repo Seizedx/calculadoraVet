@@ -15,6 +15,7 @@ import { TopBarComponent } from '../../../Components/TopBarComponent';
 import QuickActionsComponent from '../../../Components/QuickActionsComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { useNavigation } from '@react-navigation/native';
+import { resetToRoute } from '../../../Components/NavigationComponent';
 
 export const HistoryList = () => {
     const { currentTheme, actualTheme } = useTheme();
@@ -25,7 +26,7 @@ export const HistoryList = () => {
             navigation.navigate(route);
         } else {
             Alert.alert(`Rota ${route} não encontrada!`);
-            navigation.navigate('Home');
+            setTimeout(() => resetToRoute('HomeScreen'), 100);
         }
     };
 

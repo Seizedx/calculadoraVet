@@ -12,6 +12,7 @@ import {
 import { useTheme } from './ThemeComponent';
 import { useNavigation, DrawerActions, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { resetToRoute } from './NavigationComponent';
 
 export const getFormattedDateTime = () => {
   const now = new Date();
@@ -56,10 +57,7 @@ export const TopBarComponent = () => {
                         <TouchableOpacity
                             style={styles.menuButton1}
                             onPress={() => {
-                                navigation.reset({
-                                    index: 0,
-                                    routes: [{ name: 'Home' }], ////////////caso queira ir para outra tela
-                                });
+                                setTimeout(() => resetToRoute('HomeScreen'), 100);
                             }
                             }
                         >

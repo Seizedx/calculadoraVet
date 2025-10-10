@@ -7,6 +7,7 @@ import {
 } from 'lucide-react-native';
 import { useTheme } from './ThemeComponent';
 import { useNavigation } from '@react-navigation/native';
+import { resetToRoute } from './NavigationComponent';
 
 export default function QuickActionsComponent({ ignore = [] }) {
     const { currentTheme, actualTheme } = useTheme();
@@ -25,10 +26,7 @@ export default function QuickActionsComponent({ ignore = [] }) {
             navigation.navigate(route);
         } else {
             await awaitAlert(`Rota ${route} não encontrada.`, 'Retornando a Página Inicial');
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Home' }],
-            });
+            setTimeout(() => resetToRoute('HomeScreen'), 100);
         }
     };
 

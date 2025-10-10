@@ -16,6 +16,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
 import { useAuth } from '../../../Components/AuthComponent';
+import { resetToRoute } from '../../../Components/NavigationComponent';
 
 
 const { width, height } = Dimensions.get('window');
@@ -35,10 +36,7 @@ const LoginScreen = () => {
             const success = await loginUser(inputEmail, inputPassword);
             if (success) {
                 await new Promise(resolve => setTimeout(resolve, 200));
-                navigation.replace({
-                    index: 0,
-                    routes: [{ name: 'Home' }], ////////////caso queira ir para outra tela
-                });
+                setTimeout(() => resetToRoute('HomeScreen'), 100);
             } else {
                 Alert.log("Usuário não logado, tente novamente mais tarde.");
             }

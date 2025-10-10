@@ -7,7 +7,6 @@ import {
     Alert,
 } from 'react-native';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
-import QuickActionsContainer from '../../../Components/QuickActionsComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../Components/CustomTextInput';
@@ -218,8 +217,6 @@ export const HematologicalIndices = () => {
                         </View>
                     )}
                 </View>
-
-                <QuickActionsContainer />
             </ScrollView>
         </View>
     );

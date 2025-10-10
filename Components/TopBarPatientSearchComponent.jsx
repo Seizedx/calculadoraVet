@@ -19,6 +19,7 @@ import {
 import { useNavigation, DrawerActions, useRoute } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useRef, useEffect } from 'react';
+import { resetToRoute } from './NavigationComponent';
 
 // Lista mock de pacientes - você pode substituir por dados da sua API
 const mockPatients = [
@@ -193,10 +194,7 @@ const TopBarPatientSearch = () => {
                         <TouchableOpacity
                             style={styles.menuButton1}
                             onPress={() => {
-                                navigation.reset({
-                                    index: 0,
-                                    routes: [{ name: 'Home' }], ////////////caso queira ir para outra tela
-                                });
+                                setTimeout(() => resetToRoute('HomeScreen'), 100);
                             }
                             }
                         >

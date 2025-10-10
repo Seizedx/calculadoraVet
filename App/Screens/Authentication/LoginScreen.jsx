@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
 import { useAuth } from '../../../Components/AuthComponent';
-
+import { resetToRoute } from '../../../Components/NavigationComponent';
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,10 +36,7 @@ const LoginScreen = () => {
             const success = await loginUser(inputEmail, inputPassword);
             if (success) {
                 await new Promise(resolve => setTimeout(resolve, 200));
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Home' }], ////////////caso queira ir para outra tela
-                });
+                setTimeout(() => resetToRoute('HomeScreen'), 100);
             } else {
                 Alert.log("Usuário não logado, tente novamente mais tarde.");
             }
@@ -137,11 +134,11 @@ const LoginScreen = () => {
                             <Text style={[styles.optionsText, { color: currentTheme.color }]}>Não está cadastrado? Cadastrar.</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.googleSignInArea, {borderColor: currentTheme.color}]}
+                            style={[styles.googleSignInArea, { borderColor: currentTheme.color }]}
                             activeOpacity={0.3}
                             onPress={loginWithGoogle}
                         >
-                            <Image 
+                            <Image
                                 source={require('../../../src/images/googleLogo.png')}
                                 style={styles.googleSignInImg}
                             />

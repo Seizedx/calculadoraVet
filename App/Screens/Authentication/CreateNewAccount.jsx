@@ -17,6 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
 import { useAuth } from '../../../Components/AuthComponent';
+import { resetToRoute } from '../../../Components/NavigationComponent';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,10 +39,7 @@ const CreateNewAccount = () => {
                 const success = await createUser(inputEmail, inputPassword);
                 if (success) {
                     await new Promise(resolve => setTimeout(resolve, 200));
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Home' }],       ////////////caso queira ir para outra tela
-                    });
+                    setTimeout(() => resetToRoute('HomeScreen'), 100);
                 } else {
                     Alert.log("Cadastro não foi concluído (validação falhou ou erro ocorreu).");
                 }
@@ -152,7 +150,7 @@ const CreateNewAccount = () => {
                                 <Text style={[styles.buttonText, { color: currentTheme.color }]}>Criar Conta</Text>
                             </View>
                         </TouchableOpacity>
-                    <View style={{ marginBottom: 50 }}></View>
+                        <View style={{ marginBottom: 50 }}></View>
                     </View>
                 </View>
             </ScrollView>

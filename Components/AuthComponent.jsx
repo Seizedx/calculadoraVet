@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }) => {
             });
 
             await awaitAlert('Usuário conectado!', 'Você agora pode gerenciar sua conta.');
-            setTimeout(() => resetToRoute('Home'), 100);
+            setTimeout(() => resetToRoute('HomeScreen'), 100);
             return true;
 
         } catch (error) {
@@ -173,7 +173,7 @@ export const AuthProvider = ({ children }) => {
             });
 
             await awaitAlert('Usuário conectado!', 'Você agora pode gerenciar sua conta.');
-            setTimeout(() => resetToRoute('Home'), 100);
+            setTimeout(() => resetToRoute('HomeScreen'), 100);
             return true;
 
         } catch (error) {

@@ -11,6 +11,9 @@ import { TopBarComponent } from '../../../Components/TopBarComponent';
 import QuickActionsContainer from '../../../Components/QuickActionsComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { useNavigation } from '@react-navigation/native';
+import { resetToRoute } from '../../../Components/NavigationComponent';
+
+
 
 export const CalculatorList = () => {
     const { currentTheme, actualTheme } = useTheme();
@@ -21,7 +24,7 @@ export const CalculatorList = () => {
             navigation.navigate(route);
         } else {
             Alert.alert(`Rota ${route} não encontrada!`);
-            navigation.navigate('Home');
+            setTimeout(() => resetToRoute('HomeScreen'), 100);
         }
     };
 

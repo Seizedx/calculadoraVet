@@ -18,6 +18,7 @@ import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
 import { useAuth, authUser } from '../../../Components/AuthComponent';
 const { width, height } = Dimensions.get('window');
+import { resetToRoute } from '../../../Components/NavigationComponent';
 
 const RecoverPassword = () => {
     const { currentTheme } = useTheme();
@@ -32,10 +33,7 @@ const RecoverPassword = () => {
             const success = await forgotPassword(inputEmail);
             if (success) {
                 await new Promise(resolve => setTimeout(resolve, 200));
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Home' }], ////////////caso queira ir para outra tela
-                });
+                setTimeout(() => resetToRoute('HomeScreen'), 100);
             } else {
                 Alert.error("Email não enviado, tente novamente.");
             }

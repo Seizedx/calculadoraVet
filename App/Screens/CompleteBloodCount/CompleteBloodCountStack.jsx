@@ -1,18 +1,17 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Calculator, FileText, CirclePlus as PlusCircle, ChartBar as BarChart3 } from 'lucide-react-native';
 import { useTheme } from '../../../Components/ThemeComponent';
-import PlateletCountScreen from './PlateletCountScreen';
-
-import PlateletCountReferences from './References';
+import CompleteBloodCountScreen from './CompleteBloodCountScreen';
+import CompleteBloodCountReferences from './References';
 
 const Tab = createBottomTabNavigator();
 
-export const PlateletCountStack = () => {
+export const CompleteBloodCountStack = () => {
     const { currentTheme } = useTheme();
 
     return (
         <Tab.Navigator
-            initialRouteName='PlateletCountScreen'
+            initialRouteName='CompleteBloodCountScreen'
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
@@ -24,14 +23,14 @@ export const PlateletCountStack = () => {
             }}
         >
             <Tab.Screen
-                name="PlateletCountScreen"
-                component={PlateletCountScreen}
+                name="CompleteBloodCountScreen"
+                component={CompleteBloodCountScreen}
                 initialParams={{
-                    title: 'Contagem de Plaquetas',
+                    title: 'Hemograma Completo',
                     search: false,
                 }}
                 options={{
-                    title: 'Contagem',
+                    title: 'Hemograma Completo',
                     tabBarIcon: ({ size, color }) => (
                         <Calculator size={size} color={color} />
                     ),
@@ -39,8 +38,8 @@ export const PlateletCountStack = () => {
 
             />
             <Tab.Screen
-                name="PlateletCountReferences"
-                component={PlateletCountReferences}
+                name="CompleteBloodCountReferences"
+                component={CompleteBloodCountReferences}
                 initialParams={{
                     title: 'Referências',
                     search: false,

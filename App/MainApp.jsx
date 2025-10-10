@@ -9,9 +9,9 @@ import Library from './Screens/Library';
 import { LoginStack } from './Screens/Authentication/LoginStack';
 import { CalculatorsStack } from './Screens/Calculators/CalculatorStack';
 import { PlateletCountStack } from './Screens/PlateletCount/PlateletCountStack';
-import { HematologicalIndices } from './Screens/HematologicalIndices/HematologicalIndices';
-import { WhiteBloodCellCount } from './Screens/WhiteBloodCellCount/WhiteBloodCellCount';
-import { CompleteBloodCount } from './Screens/CompleteBloodCount/CompleteBloodCount';
+import { HematologicalIndicesStack } from './Screens/HematologicalIndices/HematologicalIndicesStack';
+import { WhiteBloodCellCountStack } from './Screens/WhiteBloodCellCount/WhiteBloodCellCountStack';
+import { CompleteBloodCountStack } from './Screens/CompleteBloodCount/CompleteBloodCountStack';
 import { HistoryStack } from './Screens/History/HistoryStack';
 
 import { setNavigator } from '../Components/NavigationComponent';
@@ -136,8 +136,8 @@ const MainApp = () => {
                     }}
                 />
                 <Drawer.Screen
-                    name="HematologicalIndices"
-                    component={HematologicalIndices}
+                    name="HematologicalIndicesStack"
+                    component={HematologicalIndicesStack}
                     options={{
                         drawerItemStyle: { display: 'none' },
                     }}
@@ -147,8 +147,8 @@ const MainApp = () => {
                     }}
                 />
                 <Drawer.Screen
-                    name="WhiteBloodCellCount"
-                    component={WhiteBloodCellCount}
+                    name="WhiteBloodCellCountStack"
+                    component={WhiteBloodCellCountStack}
                     options={{
                         drawerItemStyle: { display: 'none' },
                     }}
@@ -158,8 +158,8 @@ const MainApp = () => {
                     }}
                 />
                 <Drawer.Screen
-                    name="CompleteBloodCount"
-                    component={CompleteBloodCount}
+                    name="CompleteBloodCountStack"
+                    component={CompleteBloodCountStack}
                     options={{
                         drawerItemStyle: { display: 'none' },
                     }}

@@ -297,9 +297,6 @@ const styles = StyleSheet.create({
     centeredLabel: {
         textAlign: 'center',
     },
-    centeredLabel: {
-        textAlign: 'center',
-    },
     animalTypeContainer: {
         flexDirection: 'row',
         justifyContent: 'center',

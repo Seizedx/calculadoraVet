@@ -44,12 +44,22 @@ export const HistoryList = () => {
         {
             id: 2,
             title: 'Histórico de Contagem de Plaquetas',
-            subtitle: 'Detalhes de Pacientes, Status, Contagens e Observações',
+            subtitle: 'Informações referentes a contagem de plaquetas',
             icon: FileText,
             iconType: 'icon',
             color: '#7f7d00ff',
             backgroundColor: actualTheme === 'light' ? '#7f7d0050' : '#7f7d0030',
             location: 'PlateletCountHistory',
+        },
+                {
+            id: 3,
+            title: 'Histórico de Índices Hematológicos',
+            subtitle: 'Contagens',
+            icon: FileText,
+            iconType: 'icon',
+            color: '#83b906ff',
+            backgroundColor: actualTheme === 'light' ? '#83b90650' : '#83b90630',
+            location: 'HematologicalIndicesHistory',
         },
     ]
     return (

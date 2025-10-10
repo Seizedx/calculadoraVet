@@ -7,14 +7,13 @@ import {
     Alert,
 } from 'react-native';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
-import QuickActionsContainer from '../../../Components/QuickActionsComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../Components/CustomTextInput';
 import { useState } from 'react';
 import { Calculator, Info, RotateCcw, TrendingUp } from 'lucide-react-native';
 
-export const WhiteBloodCellCount = () => {
+export const WhiteBloodCellCountScreen = () => {
     const { currentTheme, actualTheme } = useTheme();
     const navigation = useNavigation();
 
@@ -137,11 +136,9 @@ export const WhiteBloodCellCount = () => {
             >
                 <TopBarComponent />
                 <View style={styles.welcomeSection}>
-                    <Text style={[styles.welcomeTitle, { color: currentTheme.color }]}>
-                        Leucograma - Análise de Glóbulos Brancos
-                    </Text>
+
                     <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
-                        Calcule valores absolutos e percentuais dos leucócitos
+                        Análise de Glóbulos Brancos: Calcule valores absolutos e percentuais dos leucócitos
                     </Text>
                 </View>
 
@@ -355,12 +352,6 @@ const styles = StyleSheet.create({
         paddingVertical: 25,
         alignItems: 'center',
     },
-    welcomeTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
     welcomeSubtitle: {
         fontSize: 16,
         textAlign: 'center',
@@ -484,4 +475,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default WhiteBloodCellCount;
+export default WhiteBloodCellCountScreen;

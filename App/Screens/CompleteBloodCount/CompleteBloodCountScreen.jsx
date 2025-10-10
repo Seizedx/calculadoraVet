@@ -15,7 +15,7 @@ import { Calculator, Info, RotateCcw, Dog, Cat, BookOpen, Activity } from 'lucid
 
 const { width } = Dimensions.get('window');
 
-export const CompleteBloodCount = () => {
+export const CompleteBloodCountScreen = () => {
     const { currentTheme } = useTheme();
     const [activeTab, setActiveTab] = useState('application');
     const [selectedSpecies, setSelectedSpecies] = useState('dog');
@@ -68,7 +68,7 @@ export const CompleteBloodCount = () => {
         }
     };
 
-    const calculateCompleteBloodCount = () => {
+    const calculateCompleteBloodCount  = () => {
         if (!hematocrit || !hemoglobin || !rbcCount || !totalWBC || !plateletCount) {
             Alert.alert('Erro', 'Por favor, preencha pelo menos os campos básicos do hemograma.');
             return;
@@ -991,4 +991,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CompleteBloodCount;
+export default CompleteBloodCountScreen;

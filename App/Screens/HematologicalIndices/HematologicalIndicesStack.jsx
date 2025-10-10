@@ -1,18 +1,18 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Calculator, FileText, CirclePlus as PlusCircle, ChartBar as BarChart3 } from 'lucide-react-native';
 import { useTheme } from '../../../Components/ThemeComponent';
-import PlateletCountScreen from './PlateletCountScreen';
+import HematologicalIndicesScreen from './HematologicalIndicesScreen';
 
-import PlateletCountReferences from './References';
+import HematologicalIndicesReferences from './References';
 
 const Tab = createBottomTabNavigator();
 
-export const PlateletCountStack = () => {
+export const HematologicalIndicesStack = () => {
     const { currentTheme } = useTheme();
 
     return (
         <Tab.Navigator
-            initialRouteName='PlateletCountScreen'
+            initialRouteName='HematologicalIndicesScreen'
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
@@ -24,14 +24,14 @@ export const PlateletCountStack = () => {
             }}
         >
             <Tab.Screen
-                name="PlateletCountScreen"
-                component={PlateletCountScreen}
+                name="HematologicalIndicesScreen"
+                component={HematologicalIndicesScreen}
                 initialParams={{
-                    title: 'Contagem de Plaquetas',
+                    title: 'Índices Hematológicos',
                     search: false,
                 }}
                 options={{
-                    title: 'Contagem',
+                    title: 'Índices Hematológicos',
                     tabBarIcon: ({ size, color }) => (
                         <Calculator size={size} color={color} />
                     ),
@@ -39,8 +39,8 @@ export const PlateletCountStack = () => {
 
             />
             <Tab.Screen
-                name="PlateletCountReferences"
-                component={PlateletCountReferences}
+                name="HematologicalIndicesReferences"
+                component={HematologicalIndicesReferences}
                 initialParams={{
                     title: 'Referências',
                     search: false,

@@ -91,7 +91,7 @@ export const HomeScreen = () => {
             iconType: 'icon',
             color: '#45B7D1',
             backgroundColor: actualTheme === 'light' ? '#45B7D150' : '#45B7D130',
-            location: 'HematologicalIndices',
+            location: 'HematologicalIndicesStack',
         },
         {
             id: 4,
@@ -101,7 +101,7 @@ export const HomeScreen = () => {
             iconType: 'icon',
             color: '#96CEB4',
             backgroundColor: actualTheme === 'light' ? '#96CEB450' : '#96CEB430',
-            location: 'WhiteBloodCellCount',
+            location: 'WhiteBloodCellCountStack',
         },
         {
             id: 5,
@@ -111,7 +111,7 @@ export const HomeScreen = () => {
             iconType: 'icon',
             color: '#FF6B6B',
             backgroundColor: actualTheme === 'light' ? '#ff6b6b50' : '#ff6b6b30',
-            location: 'CompleteBloodCount',
+            location: 'CompleteBloodCountStack',
         },
     ];
 

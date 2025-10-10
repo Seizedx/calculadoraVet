@@ -1,18 +1,18 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Calculator, FileText, CirclePlus as PlusCircle, ChartBar as BarChart3 } from 'lucide-react-native';
+import { Calculator, CirclePlus as PlusCircle, ChartBar as BarChart3 } from 'lucide-react-native';
 import { useTheme } from '../../../Components/ThemeComponent';
-import PlateletCountScreen from './PlateletCountScreen';
+import WhiteBloodCellCountScreen from './WhiteBloodCellCountScreen';
 
-import PlateletCountReferences from './References';
+import WhiteBloodCellCountReferences from './References';
 
 const Tab = createBottomTabNavigator();
 
-export const PlateletCountStack = () => {
+export const WhiteBloodCellCountStack = () => {
     const { currentTheme } = useTheme();
 
     return (
         <Tab.Navigator
-            initialRouteName='PlateletCountScreen'
+            initialRouteName='WhiteBloodCellCountScreen'
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
@@ -24,14 +24,14 @@ export const PlateletCountStack = () => {
             }}
         >
             <Tab.Screen
-                name="PlateletCountScreen"
-                component={PlateletCountScreen}
+                name="WhiteBloodCellCountScreen"
+                component={WhiteBloodCellCountScreen}
                 initialParams={{
-                    title: 'Contagem de Plaquetas',
+                    title: 'Leucograma',
                     search: false,
                 }}
                 options={{
-                    title: 'Contagem',
+                    title: 'Leucograma',
                     tabBarIcon: ({ size, color }) => (
                         <Calculator size={size} color={color} />
                     ),
@@ -39,8 +39,8 @@ export const PlateletCountStack = () => {
 
             />
             <Tab.Screen
-                name="PlateletCountReferences"
-                component={PlateletCountReferences}
+                name="WhiteBloodCellCountReferences"
+                component={WhiteBloodCellCountReferences}
                 initialParams={{
                     title: 'Referências',
                     search: false,

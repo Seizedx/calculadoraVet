@@ -13,110 +13,84 @@ import { Info, Dog, Cat } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
-export default function HematologicalIndicesReferences() {
+export default function LeukogramReferences() {
     const { currentTheme } = useTheme();
     const [selectedSpecies, setSelectedSpecies] = useState('dog');
-    const [selectedIndex, setSelectedIndex] = useState('mcv');
+    const [selectedCell, setSelectedCell] = useState('neutrophils');
 
+    // Valores de referência baseados em cães e gatos
     const referenceValues = {
         dog: {
-            mcv: '60 - 77 fL',
-            mch: '19 - 24 pg',
-            mchc: '32 - 36 g/dL',
+            neutrophils: '40 - 75% (2.000 - 7.500/μL)',
+            lymphocytes: '20 - 50% (1.000 - 4.000/μL)',
+            monocytes: '2 - 10% (100 - 1.000/μL)',
+            eosinophils: '1 - 6% (50 - 500/μL)',
+            basophils: '0 - 2% (0 - 200/μL)',
         },
         cat: {
-            mcv: '39 - 55 fL',
-            mch: '13 - 17 pg',
-            mchc: '30 - 36 g/dL',
+            neutrophils: '35 - 75% (2.500 - 12.500/μL)',
+            lymphocytes: '20 - 55% (1.500 - 7.000/μL)',
+            monocytes: '1 - 4% (0 - 300/μL)',
+            eosinophils: '2 - 10% (100 - 1.500/μL)',
+            basophils: '0 - 1% (0 - 100/μL)',
         },
     };
 
-    const indicesData = {
-        mcv: {
-            name: 'VCM (Volume Corpuscular Médio)',
+    const cellsData = {
+        neutrophils: {
+            name: 'Neutrófilos',
             description:
-                'Mede o tamanho médio das hemácias. Classifica as anemias como microcíticas, normocíticas ou macrocíticas.',
-            normal: 'Normal: Hemácias de tamanho adequado.',
+                'Primeira linha de defesa contra infecções bacterianas. Importante na resposta inflamatória.',
+            normal: 'Normal: Valores dentro da faixa de referência.',
             conditions: [
-                {
-                    type: 'Baixo (Microcitose)',
-                    color: '#f59e0b',
-                    causes: [
-                        'Anemia ferropriva',
-                        'Doença renal crônica',
-                        'Anemia por doença crônica',
-                    ],
-                    notes: 'Hemácias menores que o normal.',
-                },
-                {
-                    type: 'Alto (Macrocitose)',
-                    color: '#ef4444',
-                    causes: [
-                        'Anemia megaloblástica (deficiência de B12/folato)',
-                        'Doença hepática',
-                        'Hipotireoidismo',
-                    ],
-                    notes: 'Hemácias maiores que o normal.',
-                },
+                { type: 'Baixo', color: '#f59e0b', causes: ['Infecções virais', 'Doenças crônicas'], notes: 'Neutropenia' },
+                { type: 'Alto', color: '#ef4444', causes: ['Infecções bacterianas', 'Inflamação aguda'], notes: 'Neutrofilia' },
             ],
         },
-        mch: {
-            name: 'HCM (Hemoglobina Corpuscular Média)',
+        lymphocytes: {
+            name: 'Linfócitos',
             description:
-                'Indica a quantidade média de hemoglobina por hemácia, relacionada à coloração (cromia).',
-            normal: 'Normal: Células com coloração adequada.',
+                'Responsáveis pela imunidade específica, produzindo anticorpos e combatendo patógenos.',
+            normal: 'Normal: Valores dentro da faixa de referência.',
             conditions: [
-                {
-                    type: 'Baixo (Hipocromia)',
-                    color: '#f59e0b',
-                    causes: [
-                        'Anemia ferropriva',
-                        'Talassemia',
-                        'Anemia de doença crônica',
-                    ],
-                    notes: 'Hemácias pálidas devido à baixa hemoglobina.',
-                },
-                {
-                    type: 'Alto (Hipercromia)',
-                    color: '#ef4444',
-                    causes: [
-                        'Desidratação severa',
-                        'Esferocitose hereditária (raro)',
-                    ],
-                    notes: 'Células mais concentradas em hemoglobina.',
-                },
+                { type: 'Baixo', color: '#f59e0b', causes: ['Imunossupressão', 'Infecções graves'], notes: 'Linfopenia' },
+                { type: 'Alto', color: '#ef4444', causes: ['Infecções virais', 'Estresse'], notes: 'Linfocitose' },
             ],
         },
-        mchc: {
-            name: 'CHCM (Concentração de Hemoglobina Corpuscular Média)',
+        monocytes: {
+            name: 'Monócitos',
             description:
-                'Mostra a concentração de hemoglobina dentro das hemácias, importante para avaliar coloração e integridade celular.',
-            normal: 'Normal: Concentração adequada de hemoglobina.',
+                'Fagócitos que se transformam em macrófagos, participando da resposta imune e remoção de detritos.',
+            normal: 'Normal: Valores dentro da faixa de referência.',
             conditions: [
-                {
-                    type: 'Baixo',
-                    color: '#f59e0b',
-                    causes: [
-                        'Anemia ferropriva',
-                        'Hemodiluição',
-                    ],
-                    notes: 'Hemoglobina insuficiente em relação ao volume celular.',
-                },
-                {
-                    type: 'Alto',
-                    color: '#ef4444',
-                    causes: [
-                        'Desidratação',
-                        'Esferocitose hereditária',
-                    ],
-                    notes: 'Células mais densas em hemoglobina.',
-                },
+                { type: 'Baixo', color: '#f59e0b', causes: ['Infecções agudas', 'Medicações'], notes: 'Monocitopenia' },
+                { type: 'Alto', color: '#ef4444', causes: ['Infecções crônicas', 'Inflamações'], notes: 'Monocitose' },
+            ],
+        },
+        eosinophils: {
+            name: 'Eosinófilos',
+            description:
+                'Participam de respostas alérgicas e parasitárias, regulando a inflamação.',
+            normal: 'Normal: Valores dentro da faixa de referência.',
+            conditions: [
+                { type: 'Baixo', color: '#f59e0b', causes: ['Infecções bacterianas'], notes: 'Eosinopenia' },
+                { type: 'Alto', color: '#ef4444', causes: ['Alergias', 'Parasitoses'], notes: 'Eosinofilia' },
+            ],
+        },
+        basophils: {
+            name: 'Basófilos',
+            description:
+                'Relacionados a reações alérgicas e inflamatórias, liberando histamina.',
+            normal: 'Normal: Valores dentro da faixa de referência.',
+            conditions: [
+                { type: 'Baixo', color: '#f59e0b', causes: ['Pouco relevante clinicamente'], notes: 'Basopenia' },
+                { type: 'Alto', color: '#ef4444', causes: ['Reações alérgicas'], notes: 'Basofilia' },
             ],
         },
     };
 
-    const selectedData = indicesData[selectedIndex];
-    const refValue = referenceValues[selectedSpecies][selectedIndex];
+    const selectedData = cellsData[selectedCell];
+    const refValue = referenceValues[selectedSpecies][selectedCell];
 
     return (
         <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
@@ -125,7 +99,7 @@ export default function HematologicalIndicesReferences() {
 
                 <View style={styles.welcomeSection}>
                     <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
-                        Referências e interpretações de VCM, HCM e CHCM.
+                        Referências e interpretações de leucócitos (leucograma).
                     </Text>
                 </View>
 
@@ -148,7 +122,7 @@ export default function HematologicalIndicesReferences() {
                             onPress={() => setSelectedSpecies('dog')}
                         >
                             <Dog
-                                size={40}
+                                size={36}
                                 color={
                                     selectedSpecies === 'dog'
                                         ? currentTheme.activeTintColor
@@ -183,7 +157,7 @@ export default function HematologicalIndicesReferences() {
                             onPress={() => setSelectedSpecies('cat')}
                         >
                             <Cat
-                                size={40}
+                                size={36}
                                 color={
                                     selectedSpecies === 'cat'
                                         ? currentTheme.activeTintColor
@@ -207,21 +181,21 @@ export default function HematologicalIndicesReferences() {
                     </View>
                 </View>
 
-                {/* Seletor de índice */}
+                {/* Seletor de célula */}
                 <View style={styles.selector}>
-                    {Object.keys(indicesData).map((key) => (
+                    {Object.keys(cellsData).map((key) => (
                         <TouchableOpacity
                             key={key}
                             style={[
                                 styles.selectorButton,
                                 {
                                     backgroundColor:
-                                        selectedIndex === key
+                                        selectedCell === key
                                             ? currentTheme.buttonColor
                                             : currentTheme.unselectedButtonColor,
                                 },
                             ]}
-                            onPress={() => setSelectedIndex(key)}
+                            onPress={() => setSelectedCell(key)}
                         >
                             <Text
                                 style={[
@@ -229,7 +203,7 @@ export default function HematologicalIndicesReferences() {
                                     { color: currentTheme.color },
                                 ]}
                             >
-                                {indicesData[key].name.split(' ')[0]}
+                                {cellsData[key].name}
                             </Text>
                         </TouchableOpacity>
                     ))}
@@ -339,7 +313,7 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     speciesContainer: {
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
     },
     sectionTitle: {
         fontSize: 18,
@@ -350,6 +324,7 @@ const styles = StyleSheet.create({
     speciesButtons: {
         flexDirection: 'row',
         justifyContent: 'space-around',
+        marginBottom: 15,
     },
     speciesButton: {
         alignItems: 'center',
@@ -368,11 +343,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         gap: 10,
         marginVertical: 10,
+        flexWrap: 'wrap',
     },
     selectorButton: {
         paddingVertical: 8,
         paddingHorizontal: 15,
         borderRadius: 8,
+        marginVertical: 4,
     },
     selectorText: {
         fontSize: 16,

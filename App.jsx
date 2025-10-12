@@ -11,7 +11,7 @@ export default function App() {
     return (
         <AppLoader>
             <KeyboardAwareScrollView
-                style={[styles.container, {backgroundColor: 'rgba(0, 0, 0, 0)'}]}
+                style={[styles.container, { backgroundColor: 'rgba(0, 0, 0, 0)' }]}
                 contentContainerStyle={{ flexGrow: 1 }}
                 enableOnAndroid={true}
                 extraScrollHeight={-50}

@@ -16,7 +16,7 @@ export const WhiteBloodCellCountStack = () => {
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
-                    height: 60,
+                    height: 50,
                     backgroundColor: currentTheme.gradientB,
                 },
                 tabBarActiveTintColor: currentTheme.activeTintColor,

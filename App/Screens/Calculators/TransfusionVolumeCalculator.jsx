@@ -14,7 +14,7 @@ import {
     Calculator
 } from 'lucide-react-native';
 import CustomTextInput from '../../../Components/CustomTextInput';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent, getFormattedDateTime } from '../../../Components/TopBarComponent';
 const { width, height } = Dimensions.get('window');
@@ -92,48 +92,24 @@ export default function TransfusionVolumeCalculator() {
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 200);
 
-
-        //ASYNC STORAGE
-        const saveToHistory = async () => {
-            try {
-                const historyEntry = {
-                    patientName: patientName ?? 'Paciente Não Cadastrado',
-                    patientAge: patientAge ?? '',
-                    patientSpecies: patientRace ?? animalType,
-                    patientWeight: patientWeight ?? animalWeight,
-                    date: `${formattedDate}, ${formattedTime}`,///
-                    calculationType: 'Volume de Tranfusão', /// alterados, o resto veio de result
-                    animalWeight: weight.toFixed(2),
-                    desiredHematocrit: desiredHct.toFixed(2),
-                    currentHematocrit: currentHct.toFixed(2),
-                    donorHematocrit: donorHct.toFixed(2),
-                    bloodVolume: bloodVolume.toFixed(2),
-                    infusionVolume: infusionVolume.toFixed(2),
-                    totalCPDA: totalCPDA.toFixed(2),
-                    animalType,
-                };
-
-                // Recupera histórico já salvo
-                const existingHistory = await AsyncStorage.getItem('calculationHistory');
-                let historyArray;
-
-                try {
-                    historyArray = existingHistory ? JSON.parse(existingHistory) : [];
-                    if (!Array.isArray(historyArray)) {
-                        historyArray = [historyArray];
-                    }
-                } catch (err) {
-                    historyArray = [];
-                }
-
-                historyArray.push(historyEntry);
-                await AsyncStorage.setItem('calculationHistory', JSON.stringify(historyArray));
-            } catch (error) {
-                console.error('Erro ao salvar o objeto:', error);
-            }
+        const historyEntry = {
+            patientName: patientName ?? 'Paciente Não Cadastrado',
+            patientAge: patientAge ?? '',
+            patientSpecies: patientRace ?? animalType,
+            patientWeight: patientWeight ?? animalWeight,
+            date: `${formattedDate}, ${formattedTime}`,
+            calculationType: 'Volume de Tranfusão', /// alterados, o resto veio de result
+            animalWeight: weight.toFixed(2),
+            desiredHematocrit: desiredHct.toFixed(2),
+            currentHematocrit: currentHct.toFixed(2),
+            donorHematocrit: donorHct.toFixed(2),
+            bloodVolume: bloodVolume.toFixed(2),
+            infusionVolume: infusionVolume.toFixed(2),
+            totalCPDA: totalCPDA.toFixed(2),
+            animalType,
         };
 
-        saveToHistory();
+        AsyncStorageHistoryComponent('calculationHistory', historyEntry);
     };
 
     return (

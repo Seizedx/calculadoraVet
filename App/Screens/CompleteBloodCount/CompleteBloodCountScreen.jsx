@@ -1,142 +1,265 @@
+// Components/CompleteBloodCountScreen.js
+import React, { useState, useRef, useEffect } from 'react';
 import {
     View,
-    StyleSheet,
-    ScrollView,
     Text,
+    ScrollView,
     TouchableOpacity,
     Alert,
+    StyleSheet,
     Dimensions,
+    Keyboard,
 } from 'react-native';
-import { TopBarComponent } from '../../../Components/TopBarComponent';
-import { useTheme } from '../../../Components/ThemeComponent';
+import {
+    Calculator,
+    Info,
+    RotateCcw,
+    Dog,
+    Cat,
+} from 'lucide-react-native';
+import { TopBarComponent, getFormattedDateTime, scrollToResult } from '../../../Components/TopBarComponent';
 import CustomTextInput from '../../../Components/CustomTextInput';
-import { useState } from 'react';
-import { Calculator, Info, RotateCcw, Dog, Cat, BookOpen, Activity } from 'lucide-react-native';
+import { useTheme } from '../../../Components/ThemeComponent';
 
 const { width } = Dimensions.get('window');
 
-export const CompleteBloodCountScreen = () => {
+export default function CompleteBloodCountScreen() {
     const { currentTheme } = useTheme();
-    const [activeTab, setActiveTab] = useState('application');
+    const { formattedDate, formattedTime } = getFormattedDateTime();
+
+
+    // Espécie
     const [selectedSpecies, setSelectedSpecies] = useState('dog');
-    
-    // Estados para os valores do hemograma
+
+    // Valores básicos
     const [hematocrit, setHematocrit] = useState('');
     const [hemoglobin, setHemoglobin] = useState('');
-    const [rbcCount, setRbcCount] = useState('');
-    const [totalWBC, setTotalWBC] = useState('');
+    const [rbcCount, setRbcCount] = useState(''); // milhões/μL
+    const [totalWBC, setTotalWBC] = useState(''); // /μL
+    const [plateletCount, setPlateletCount] = useState(''); // /μL
+    const [rdw, setRdw] = useState(''); // opcional, %
+
+    // Fórmula leucocitária (porcentagens)
     const [neutrophils, setNeutrophils] = useState('');
     const [lymphocytes, setLymphocytes] = useState('');
     const [monocytes, setMonocytes] = useState('');
     const [eosinophils, setEosinophils] = useState('');
     const [basophils, setBasophils] = useState('');
-    const [plateletCount, setPlateletCount] = useState('');
-    
+
+    // Refs para navegação entre inputs
+    const rbcRef = useRef(null);
+    const wbcRef = useRef(null);
+    const plateletsRef = useRef(null);
+    const neutRef = useRef(null);
+    const lymphRef = useRef(null);
+    const monoRef = useRef(null);
+    const eosRef = useRef(null);
+    const basoRef = useRef(null);
+    const scrollViewRef = useRef(null);
+    const resultViewRef = useRef(null);
+
+
+    // Resultado
     const [results, setResults] = useState(null);
 
-    // Valores de referência para cães e gatos
+
+    // Valores de referência (mantidos para cão e gato)
     const referenceValues = {
         dog: {
             hematocrit: { min: 37, max: 55 },
             hemoglobin: { min: 12, max: 18 },
-            rbc: { min: 5.5, max: 8.5 },
-            wbc: { min: 6000, max: 17000 },
-            neutrophils: { min: 3000, max: 11500 },
+            rbc: { min: 5.5, max: 8.5 }, // milhões/μL
+            wbc: { min: 6000, max: 17000 }, // /μL
+            neutrophils: { min: 3000, max: 11500 }, // absolute /μL
             lymphocytes: { min: 1000, max: 4800 },
             monocytes: { min: 150, max: 1350 },
             eosinophils: { min: 100, max: 1250 },
             basophils: { min: 0, max: 100 },
             platelets: { min: 200000, max: 500000 },
-            mcv: { min: 60, max: 77 },
-            mch: { min: 19.5, max: 24.5 },
-            mchc: { min: 32, max: 36 }
+            mcv: { min: 60, max: 77 }, // fL
+            mch: { min: 19.5, max: 24.5 }, // pg
+            mchc: { min: 32, max: 36 }, // g/dL
         },
         cat: {
             hematocrit: { min: 30, max: 45 },
             hemoglobin: { min: 8, max: 15 },
-            rbc: { min: 5, max: 10 },
-            wbc: { min: 5500, max: 19500 },
+            rbc: { min: 5, max: 10 }, // milhões/μL
+            wbc: { min: 5500, max: 19500 }, // /μL
             neutrophils: { min: 2500, max: 12500 },
             lymphocytes: { min: 1500, max: 7000 },
             monocytes: { min: 0, max: 850 },
             eosinophils: { min: 0, max: 1500 },
             basophils: { min: 0, max: 100 },
             platelets: { min: 300000, max: 800000 },
-            mcv: { min: 39, max: 55 },
-            mch: { min: 12.5, max: 17.5 },
-            mchc: { min: 30, max: 36 }
-        }
+            mcv: { min: 39, max: 55 }, // fL
+            mch: { min: 12.5, max: 17.5 }, // pg
+            mchc: { min: 30, max: 36 }, // g/dL
+        },
     };
 
-    const calculateCompleteBloodCount  = () => {
-        if (!hematocrit || !hemoglobin || !rbcCount || !totalWBC || !plateletCount) {
-            Alert.alert('Erro', 'Por favor, preencha pelo menos os campos básicos do hemograma.');
+    useEffect(() => {
+        setResults(null);
+    }, [
+        hematocrit,
+        hemoglobin,
+        rbcCount,
+        totalWBC,
+        plateletCount,
+        neutrophils,
+        lymphocytes,
+        monocytes,
+        eosinophils,
+        basophils,
+        rdw,
+        selectedSpecies,
+    ]);
+
+    const showInfo = (parameter) => {
+        const infoText = {
+            hematocrit: 'Hematócrito: percentual do volume sanguíneo ocupado por hemácias.',
+            hemoglobin: 'Hemoglobina: proteína que transporta oxigénio nas hemácias (g/dL).',
+            rbc: 'Hemácias (RBC): número de eritrócitos, em milhões/μL.',
+            wbc: 'Leucócitos (WBC): contagem total de células brancas por μL.',
+            platelets: 'Plaquetas: fragmentos celulares responsáveis pela coagulação (/μL).',
+            mcv: 'VCM: volume corpuscular médio (fL) — calculado a partir do Hct e RBC.',
+            mch: 'HCM: hemoglobina corpuscular média (pg) — calculado a partir do Hgb e RBC.',
+            mchc: 'CHCM: concentração de hemoglobina corpuscular média (g/dL) — Hgb/Hct.',
+            rdw: 'RDW: amplitude de distribuição de hemácias (opcional).',
+            neutrophils: 'Neutrófilos: principais células da defesa inata (percentual e absoluto).',
+            lymphocytes: 'Linfócitos: células da resposta imunitária (percentual e absoluto).',
+            monocytes: 'Monócitos: células fagocitárias (percentual e absoluto).',
+            eosinophils: 'Eosinófilos: associados a parasitas e alergias (percentual e absoluto).',
+            basophils: 'Basófilos: células raras, muitas vezes pouco numeradas (percentual e absoluto).',
+        };
+
+        Alert.alert('Informação', infoText[parameter] ?? 'Informação não disponível.');
+    };
+
+    const getValueStatus = (value, parameter) => {
+        const ranges = referenceValues[selectedSpecies][parameter];
+        if (!ranges || value === null || value === undefined || value === '') {
+            return { status: '—', color: currentTheme.inactiveTintColor };
+        }
+
+        const numValue = parseFloat(value);
+        if (isNaN(numValue)) {
+            return { status: '—', color: currentTheme.inactiveTintColor };
+        }
+
+        if (numValue < ranges.min) {
+            return { status: 'Baixo', color: '#f59e0b' };
+        }
+
+        if (numValue > ranges.max) {
+            return { status: 'Alto', color: '#ef4444' };
+        }
+
+        return { status: 'Normal', color: '#10b981' };
+    };
+
+    const calculateCompleteBloodCount = () => {
+        // checagem de campos essenciais
+        if (
+            !hematocrit.trim() ||
+            !hemoglobin.trim() ||
+            !rbcCount.trim() ||
+            !totalWBC.trim() ||
+            !plateletCount.trim()
+        ) {
+            Alert.alert('Erro', 'Preencha os campos: Hematócrito, Hemoglobina, Hemácias, Leucócitos e Plaquetas.');
             return;
         }
 
         const hct = parseFloat(hematocrit);
         const hgb = parseFloat(hemoglobin);
-        const rbc = parseFloat(rbcCount) * 1000000; // Converter para células/μL
+        const rbcMillions = parseFloat(rbcCount); // em milhões/μL
         const wbc = parseFloat(totalWBC);
         const platelets = parseFloat(plateletCount);
 
-        if (hct <= 0 || hgb <= 0 || rbc <= 0 || wbc <= 0 || platelets <= 0) {
-            Alert.alert('Erro', 'Todos os valores devem ser maiores que zero.');
+        if (
+            isNaN(hct) ||
+            isNaN(hgb) ||
+            isNaN(rbcMillions) ||
+            isNaN(wbc) ||
+            isNaN(platelets)
+        ) {
+            Alert.alert('Erro', 'Um ou mais campos essenciais contêm valores inválidos.');
             return;
         }
 
-        // Cálculos dos índices hematológicos
-        const mcv = (hct / rbc) * 10; // Volume Corpuscular Médio (fL)
-        const mch = (hgb / rbc) * 10; // Hemoglobina Corpuscular Média (pg)
-        const mchc = (hgb / hct) * 100; // Concentração de Hemoglobina Corpuscular Média (g/dL)
-
-        // Cálculos da fórmula leucocitária
-        const neutrophilsAbs = ((parseFloat(neutrophils) || 0) / 100) * wbc;
-        const lymphocytesAbs = ((parseFloat(lymphocytes) || 0) / 100) * wbc;
-        const monocytesAbs = ((parseFloat(monocytes) || 0) / 100) * wbc;
-        const eosinophilsAbs = ((parseFloat(eosinophils) || 0) / 100) * wbc;
-        const basophilsAbs = ((parseFloat(basophils) || 0) / 100) * wbc;
-
-        const totalPercentage = (parseFloat(neutrophils) || 0) + (parseFloat(lymphocytes) || 0) + 
-                               (parseFloat(monocytes) || 0) + (parseFloat(eosinophils) || 0) + 
-                               (parseFloat(basophils) || 0);
-
-        if (totalPercentage > 100) {
-            Alert.alert('Aviso', 'A soma das porcentagens da fórmula leucocitária não pode ser maior que 100%.');
+        if (hct <= 0 || hgb <= 0 || rbcMillions <= 0 || wbc <= 0 || platelets <= 0) {
+            Alert.alert('Erro', 'Todos os valores essenciais devem ser maiores que zero.');
             return;
         }
 
-        setResults({
+        // converter RBC para células/μL para cálculos absolutos:
+        const rbc = rbcMillions * 1000000; // células/μL
+
+        // índices hematológicos
+        const mcv = (hct / rbc) * 10; // fL
+        const mch = (hgb / rbc) * 10; // pg
+        const mchc = (hgb / hct) * 100; // g/dL
+
+        // fórmula leucocitária (percent -> absolute)
+        const pctNeut = parseFloat(neutrophils) || 0;
+        const pctLymph = parseFloat(lymphocytes) || 0;
+        const pctMono = parseFloat(monocytes) || 0;
+        const pctEos = parseFloat(eosinophils) || 0;
+        const pctBaso = parseFloat(basophils) || 0;
+
+        const totalPct = pctNeut + pctLymph + pctMono + pctEos + pctBaso;
+
+        if (totalPct > 100) {
+            Alert.alert('Aviso', 'A soma das porcentagens da fórmula leucocitária não pode exceder 100%.');
+            return;
+        }
+
+        const neutAbs = Math.round((pctNeut / 100) * wbc);
+        const lymphAbs = Math.round((pctLymph / 100) * wbc);
+        const monoAbs = Math.round((pctMono / 100) * wbc);
+        const eosAbs = Math.round((pctEos / 100) * wbc);
+        const basoAbs = Math.round((pctBaso / 100) * wbc);
+
+        // Montar resultado
+        const res = {
             hematocrit: hct.toFixed(1),
             hemoglobin: hgb.toFixed(1),
-            rbc: (rbc / 1000000).toFixed(2),
-            wbc: wbc.toFixed(0),
-            platelets: platelets.toFixed(0),
+            rbc: (rbcMillions).toFixed(2),
+            wbc: Math.round(wbc).toString(),
+            platelets: Math.round(platelets).toString(),
+            rdw: rdw.trim() ? parseFloat(rdw).toFixed(1) + '%' : null,
             mcv: mcv.toFixed(2),
             mch: mch.toFixed(2),
             mchc: mchc.toFixed(2),
             neutrophils: {
-                percentage: (parseFloat(neutrophils) || 0).toFixed(1),
-                absolute: neutrophilsAbs.toFixed(0),
+                percentage: pctNeut.toFixed(1),
+                absolute: neutAbs.toString(),
             },
             lymphocytes: {
-                percentage: (parseFloat(lymphocytes) || 0).toFixed(1),
-                absolute: lymphocytesAbs.toFixed(0),
+                percentage: pctLymph.toFixed(1),
+                absolute: lymphAbs.toString(),
             },
             monocytes: {
-                percentage: (parseFloat(monocytes) || 0).toFixed(1),
-                absolute: monocytesAbs.toFixed(0),
+                percentage: pctMono.toFixed(1),
+                absolute: monoAbs.toString(),
             },
             eosinophils: {
-                percentage: (parseFloat(eosinophils) || 0).toFixed(1),
-                absolute: eosinophilsAbs.toFixed(0),
+                percentage: pctEos.toFixed(1),
+                absolute: eosAbs.toString(),
             },
             basophils: {
-                percentage: (parseFloat(basophils) || 0).toFixed(1),
-                absolute: basophilsAbs.toFixed(0),
+                percentage: pctBaso.toFixed(1),
+                absolute: basoAbs.toString(),
             },
-            totalPercentage: totalPercentage.toFixed(1),
-        });
+            totalLeukocytePercentage: totalPct.toFixed(1),
+        };
+
+        setResults(res);
+
+        Keyboard.dismiss();
+        setTimeout(() => {
+            scrollToResult(scrollViewRef, resultViewRef);
+        }, 200);
     };
 
     const resetForm = () => {
@@ -144,196 +267,258 @@ export const CompleteBloodCountScreen = () => {
         setHemoglobin('');
         setRbcCount('');
         setTotalWBC('');
+        setPlateletCount('');
+        setRdw('');
         setNeutrophils('');
         setLymphocytes('');
         setMonocytes('');
         setEosinophils('');
         setBasophils('');
-        setPlateletCount('');
         setResults(null);
     };
 
-    const getValueStatus = (value, parameter) => {
-        const ranges = referenceValues[selectedSpecies][parameter];
-        if (!ranges) return { status: 'Normal', color: '#10b981' };
-        
-        const numValue = parseFloat(value);
-        if (numValue < ranges.min) return { status: 'Baixo', color: '#f59e0b' };
-        if (numValue > ranges.max) return { status: 'Alto', color: '#ef4444' };
-        return { status: 'Normal', color: '#10b981' };
-    };
+    return (
+        <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+                ref={scrollViewRef}
+            >
+                <TopBarComponent />
 
-    const showInfo = (parameter) => {
-        const infoText = {
-            hematocrit: 'Hematócrito: Percentual de volume ocupado pelas hemácias no sangue total.',
-            hemoglobin: 'Hemoglobina: Proteína responsável pelo transporte de oxigênio.',
-            rbc: 'Hemácias: Células vermelhas do sangue que transportam oxigênio.',
-            wbc: 'Leucócitos: Células brancas do sangue responsáveis pela defesa.',
-            platelets: 'Plaquetas: Fragmentos celulares importantes para a coagulação.',
-            mcv: 'VCM: Volume médio das hemácias.',
-            mch: 'HCM: Quantidade média de hemoglobina por hemácia.',
-            mchc: 'CHCM: Concentração média de hemoglobina nas hemácias.'
-        };
-        
-        Alert.alert('Informação', infoText[parameter]);
-    };
-
-    const renderApplicationTab = () => (
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-            <TopBarComponent />
-            
-            <View style={styles.welcomeSection}>
-                <Text style={[styles.welcomeTitle, { color: currentTheme.color }]}>
-                    Hemograma Completo
-                </Text>
-                <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
-                    Análise completa do hemograma para {selectedSpecies === 'dog' ? 'cães' : 'gatos'}
-                </Text>
-            </View>
-
-            {/* Seleção de Espécie */}
-            <View style={styles.speciesContainer}>
-                <Text style={[styles.sectionTitle, { color: currentTheme.color }]}>
-                    Selecionar Espécie
-                </Text>
-                <View style={styles.speciesButtons}>
-                    <TouchableOpacity
-                        style={[
-                            styles.speciesButton,
-                            {
-                                backgroundColor: selectedSpecies === 'dog'
-                                    ? currentTheme.buttonColor
-                                    : currentTheme.unselectedButtonColor,
-                                borderColor: currentTheme.color,
-                            },
-                        ]}
-                        onPress={() => setSelectedSpecies('dog')}
-                    >
-                        <Dog size={40} color={selectedSpecies === 'dog' ? currentTheme.activeTintColor : currentTheme.inactiveTintColor} />
-                        <Text
-                            style={[
-                                styles.speciesText,
-                                {
-                                    color: selectedSpecies === 'dog'
-                                        ? currentTheme.activeTintColor
-                                        : currentTheme.inactiveTintColor,
-                                },
-                            ]}
-                        >
-                            Cão
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={[
-                            styles.speciesButton,
-                            {
-                                backgroundColor: selectedSpecies === 'cat'
-                                    ? currentTheme.buttonColor
-                                    : currentTheme.unselectedButtonColor,
-                                borderColor: currentTheme.color,
-                            },
-                        ]}
-                        onPress={() => setSelectedSpecies('cat')}
-                    >
-                        <Cat size={40} color={selectedSpecies === 'cat' ? currentTheme.activeTintColor : currentTheme.inactiveTintColor} />
-                        <Text
-                            style={[
-                                styles.speciesText,
-                                {
-                                    color: selectedSpecies === 'cat'
-                                        ? currentTheme.activeTintColor
-                                        : currentTheme.inactiveTintColor,
-                                },
-                            ]}
-                        >
-                            Gato
-                        </Text>
-                    </TouchableOpacity>
+                <View style={styles.welcomeSection}>
+                    <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
+                        Análise completa do hemograma para {selectedSpecies === 'dog' ? 'cães' : 'gatos'}.
+                    </Text>
                 </View>
-            </View>
 
-            <View style={styles.formContainer}>
+                {/* Seleção de espécie */}
+                <View style={styles.inputGroup}>
+                    <Text style={[styles.sectionTitle, { color: currentTheme.color }]}>
+                        Selecionar Espécie
+                    </Text>
+
+                    <View style={styles.speciesButtons}>
+                        <TouchableOpacity
+                            style={[
+                                styles.speciesButton,
+                                selectedSpecies === 'dog'
+                                    ? { backgroundColor: currentTheme.buttonColor }
+                                    : { backgroundColor: currentTheme.unselectedButtonColor },
+                                { borderColor: currentTheme.color },
+                            ]}
+                            onPress={() => setSelectedSpecies('dog')}
+                        >
+                            <Dog
+                                size={36}
+                                color={selectedSpecies === 'dog' ? currentTheme.activeTintColor : currentTheme.inactiveTintColor}
+                            />
+                            <Text style={[
+                                styles.speciesText,
+                                selectedSpecies === 'dog'
+                                    ? { color: currentTheme.activeTintColor }
+                                    : { color: currentTheme.inactiveTintColor },
+                            ]}>
+                                Cão
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[
+                                styles.speciesButton,
+                                selectedSpecies === 'cat'
+                                    ? { backgroundColor: currentTheme.buttonColor }
+                                    : { backgroundColor: currentTheme.unselectedButtonColor },
+                                { borderColor: currentTheme.color },
+                            ]}
+                            onPress={() => setSelectedSpecies('cat')}
+                        >
+                            <Cat
+                                size={36}
+                                color={selectedSpecies === 'cat' ? currentTheme.activeTintColor : currentTheme.inactiveTintColor}
+                            />
+                            <Text style={[
+                                styles.speciesText,
+                                selectedSpecies === 'cat'
+                                    ? { color: currentTheme.activeTintColor }
+                                    : { color: currentTheme.inactiveTintColor },
+                            ]}>
+                                Gato
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
                 <View style={[styles.inputSection, { backgroundColor: currentTheme.surfaceColor }]}>
                     <Text style={[styles.sectionTitle, { color: currentTheme.color }]}>
                         Valores Básicos do Hemograma
                     </Text>
-                    
-                    <CustomTextInput
-                        value={hematocrit}
-                        onChangeText={setHematocrit}
-                        placeholder="Hematócrito (%)"
-                        keyboardType="numeric"
-                    />
-                    
-                    <CustomTextInput
-                        value={hemoglobin}
-                        onChangeText={setHemoglobin}
-                        placeholder="Hemoglobina (g/dL)"
-                        keyboardType="numeric"
-                    />
-                    
-                    <CustomTextInput
-                        value={rbcCount}
-                        onChangeText={setRbcCount}
-                        placeholder="Hemácias (milhões/μL)"
-                        keyboardType="numeric"
-                    />
-                    
-                    <CustomTextInput
-                        value={totalWBC}
-                        onChangeText={setTotalWBC}
-                        placeholder="Leucócitos Totais (/μL)"
-                        keyboardType="numeric"
-                    />
-                    
-                    <CustomTextInput
-                        value={plateletCount}
-                        onChangeText={setPlateletCount}
-                        placeholder="Plaquetas (/μL)"
-                        keyboardType="numeric"
-                    />
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Hematócrito
+                        </Text>
+                        <CustomTextInput
+                            value={hematocrit}
+                            onChangeText={setHematocrit}
+                            placeholder="Em %"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => rbcRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Hemoglobina
+                        </Text>
+                        <CustomTextInput
+                            value={hemoglobin}
+                            onChangeText={setHemoglobin}
+                            placeholder="Em g/dL"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => rbcRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Hemácias (RBC)
+                        </Text>
+                        <CustomTextInput
+                            ref={rbcRef}
+                            value={rbcCount}
+                            onChangeText={setRbcCount}
+                            placeholder="Em milhões/μL"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => wbcRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Leucócitos Totais (WBC)
+                        </Text>
+                        <CustomTextInput
+                            ref={wbcRef}
+                            value={totalWBC}
+                            onChangeText={setTotalWBC}
+                            placeholder="Em /μL"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => plateletsRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Plaquetas
+                        </Text>
+                        <CustomTextInput
+                            ref={plateletsRef}
+                            value={plateletCount}
+                            onChangeText={setPlateletCount}
+                            placeholder="Em /μL"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => neutRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            RDW (opcional)
+                        </Text>
+                        <CustomTextInput
+                            value={rdw}
+                            onChangeText={setRdw}
+                            placeholder="Em %"
+                            keyboardType="numeric"
+                        />
+                    </View>
                 </View>
 
+                {/* Fórmula Leucocitária */}
                 <View style={[styles.inputSection, { backgroundColor: currentTheme.surfaceColor }]}>
                     <Text style={[styles.sectionTitle, { color: currentTheme.color }]}>
                         Fórmula Leucocitária (%)
                     </Text>
-                    
-                    <CustomTextInput
-                        value={neutrophils}
-                        onChangeText={setNeutrophils}
-                        placeholder="Neutrófilos (%)"
-                        keyboardType="numeric"
-                    />
-                    
-                    <CustomTextInput
-                        value={lymphocytes}
-                        onChangeText={setLymphocytes}
-                        placeholder="Linfócitos (%)"
-                        keyboardType="numeric"
-                    />
-                    
-                    <CustomTextInput
-                        value={monocytes}
-                        onChangeText={setMonocytes}
-                        placeholder="Monócitos (%)"
-                        keyboardType="numeric"
-                    />
-                    
-                    <CustomTextInput
-                        value={eosinophils}
-                        onChangeText={setEosinophils}
-                        placeholder="Eosinófilos (%)"
-                        keyboardType="numeric"
-                    />
-                    
-                    <CustomTextInput
-                        value={basophils}
-                        onChangeText={setBasophils}
-                        placeholder="Basófilos (%)"
-                        keyboardType="numeric"
-                    />
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Neutrófilos
+                        </Text>
+                        <CustomTextInput
+                            ref={neutRef}
+                            value={neutrophils}
+                            onChangeText={setNeutrophils}
+                            placeholder="Em %"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => lymphRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Linfócitos
+                        </Text>
+                        <CustomTextInput
+                            ref={lymphRef}
+                            value={lymphocytes}
+                            onChangeText={setLymphocytes}
+                            placeholder="Em %"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => monoRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Monócitos
+                        </Text>
+                        <CustomTextInput
+                            ref={monoRef}
+                            value={monocytes}
+                            onChangeText={setMonocytes}
+                            placeholder="Em %"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => eosRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Eosinófilos
+                        </Text>
+                        <CustomTextInput
+                            ref={eosRef}
+                            value={eosinophils}
+                            onChangeText={setEosinophils}
+                            placeholder="Em %"
+                            keyboardType="numeric"
+                            returnKeyType="next"
+                            onSubmitEditing={() => basoRef.current?.focus()}
+                        />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                        <Text style={[styles.inputLabel, { color: currentTheme.color }]}>
+                            Basófilos
+                        </Text>
+                        <CustomTextInput
+                            ref={basoRef}
+                            value={basophils}
+                            onChangeText={setBasophils}
+                            placeholder="Em %"
+                            keyboardType="numeric"
+                            returnKeyType="done"
+                        />
+                    </View>
 
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity
@@ -360,18 +545,17 @@ export const CompleteBloodCountScreen = () => {
                     </View>
                 </View>
 
+                {/* Resultados */}
                 {results && (
-                    <View style={[styles.resultsSection, { backgroundColor: currentTheme.resultBackgroundColor }]}>
+                    <View style={[styles.resultsSection, { backgroundColor: currentTheme.resultBackgroundColor }]} ref={resultViewRef}>
                         <Text style={[styles.resultsTitle, { color: currentTheme.color }]}>
                             Resultados do Hemograma Completo
                         </Text>
-                        
+
                         {/* Valores Básicos */}
                         <View style={styles.resultsGroup}>
-                            <Text style={[styles.groupTitle, { color: currentTheme.color }]}>
-                                Valores Básicos
-                            </Text>
-                            
+                            <Text style={[styles.groupTitle, { color: currentTheme.color }]}>Valores Básicos</Text>
+
                             <View style={styles.resultsGrid}>
                                 <View style={[styles.resultCard, { backgroundColor: currentTheme.surfaceColor }]}>
                                     <View style={styles.resultHeader}>
@@ -385,9 +569,7 @@ export const CompleteBloodCountScreen = () => {
                                     <Text style={[styles.resultValue, { color: currentTheme.color }]}>
                                         {results.hematocrit}%
                                     </Text>
-                                    <Text style={[styles.resultStatus, { 
-                                        color: getValueStatus(results.hematocrit, 'hematocrit').color 
-                                    }]}>
+                                    <Text style={[styles.resultStatus, { color: getValueStatus(results.hematocrit, 'hematocrit').color }]}>
                                         {getValueStatus(results.hematocrit, 'hematocrit').status}
                                     </Text>
                                 </View>
@@ -404,9 +586,7 @@ export const CompleteBloodCountScreen = () => {
                                     <Text style={[styles.resultValue, { color: currentTheme.color }]}>
                                         {results.hemoglobin} g/dL
                                     </Text>
-                                    <Text style={[styles.resultStatus, { 
-                                        color: getValueStatus(results.hemoglobin, 'hemoglobin').color 
-                                    }]}>
+                                    <Text style={[styles.resultStatus, { color: getValueStatus(results.hemoglobin, 'hemoglobin').color }]}>
                                         {getValueStatus(results.hemoglobin, 'hemoglobin').status}
                                     </Text>
                                 </View>
@@ -423,9 +603,7 @@ export const CompleteBloodCountScreen = () => {
                                     <Text style={[styles.resultValue, { color: currentTheme.color }]}>
                                         {results.rbc} milhões/μL
                                     </Text>
-                                    <Text style={[styles.resultStatus, { 
-                                        color: getValueStatus(results.rbc, 'rbc').color 
-                                    }]}>
+                                    <Text style={[styles.resultStatus, { color: getValueStatus(results.rbc, 'rbc').color }]}>
                                         {getValueStatus(results.rbc, 'rbc').status}
                                     </Text>
                                 </View>
@@ -442,9 +620,7 @@ export const CompleteBloodCountScreen = () => {
                                     <Text style={[styles.resultValue, { color: currentTheme.color }]}>
                                         {results.wbc}/μL
                                     </Text>
-                                    <Text style={[styles.resultStatus, { 
-                                        color: getValueStatus(results.wbc, 'wbc').color 
-                                    }]}>
+                                    <Text style={[styles.resultStatus, { color: getValueStatus(results.wbc, 'wbc').color }]}>
                                         {getValueStatus(results.wbc, 'wbc').status}
                                     </Text>
                                 </View>
@@ -461,9 +637,7 @@ export const CompleteBloodCountScreen = () => {
                                     <Text style={[styles.resultValue, { color: currentTheme.color }]}>
                                         {results.platelets}/μL
                                     </Text>
-                                    <Text style={[styles.resultStatus, { 
-                                        color: getValueStatus(results.platelets, 'platelets').color 
-                                    }]}>
+                                    <Text style={[styles.resultStatus, { color: getValueStatus(results.platelets, 'platelets').color }]}>
                                         {getValueStatus(results.platelets, 'platelets').status}
                                     </Text>
                                 </View>
@@ -472,10 +646,8 @@ export const CompleteBloodCountScreen = () => {
 
                         {/* Índices Hematológicos */}
                         <View style={styles.resultsGroup}>
-                            <Text style={[styles.groupTitle, { color: currentTheme.color }]}>
-                                Índices Hematológicos
-                            </Text>
-                            
+                            <Text style={[styles.groupTitle, { color: currentTheme.color }]}>Índices Hematológicos</Text>
+
                             <View style={styles.resultsGrid}>
                                 <View style={[styles.resultCard, { backgroundColor: currentTheme.surfaceColor }]}>
                                     <View style={styles.resultHeader}>
@@ -489,9 +661,7 @@ export const CompleteBloodCountScreen = () => {
                                     <Text style={[styles.resultValue, { color: currentTheme.color }]}>
                                         {results.mcv} fL
                                     </Text>
-                                    <Text style={[styles.resultStatus, { 
-                                        color: getValueStatus(results.mcv, 'mcv').color 
-                                    }]}>
+                                    <Text style={[styles.resultStatus, { color: getValueStatus(results.mcv, 'mcv').color }]}>
                                         {getValueStatus(results.mcv, 'mcv').status}
                                     </Text>
                                 </View>
@@ -508,9 +678,7 @@ export const CompleteBloodCountScreen = () => {
                                     <Text style={[styles.resultValue, { color: currentTheme.color }]}>
                                         {results.mch} pg
                                     </Text>
-                                    <Text style={[styles.resultStatus, { 
-                                        color: getValueStatus(results.mch, 'mch').color 
-                                    }]}>
+                                    <Text style={[styles.resultStatus, { color: getValueStatus(results.mch, 'mch').color }]}>
                                         {getValueStatus(results.mch, 'mch').status}
                                     </Text>
                                 </View>
@@ -527,27 +695,21 @@ export const CompleteBloodCountScreen = () => {
                                     <Text style={[styles.resultValue, { color: currentTheme.color }]}>
                                         {results.mchc} g/dL
                                     </Text>
-                                    <Text style={[styles.resultStatus, { 
-                                        color: getValueStatus(results.mchc, 'mchc').color 
-                                    }]}>
+                                    <Text style={[styles.resultStatus, { color: getValueStatus(results.mchc, 'mchc').color }]}>
                                         {getValueStatus(results.mchc, 'mchc').status}
                                     </Text>
                                 </View>
                             </View>
                         </View>
 
-                        {/* Fórmula Leucocitária */}
+                        {/* Fórmula Leucocitária — valores percentuais e absolutos */}
                         <View style={styles.resultsGroup}>
-                            <Text style={[styles.groupTitle, { color: currentTheme.color }]}>
-                                Fórmula Leucocitária
-                            </Text>
-                            
+                            <Text style={[styles.groupTitle, { color: currentTheme.color }]}>Fórmula Leucocitária</Text>
+
                             <View style={styles.cellsGrid}>
                                 <View style={[styles.cellCard, { backgroundColor: currentTheme.surfaceColor }]}>
                                     <View style={styles.cellHeader}>
-                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>
-                                            Neutrófilos
-                                        </Text>
+                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>Neutrófilos</Text>
                                         <TouchableOpacity onPress={() => showInfo('neutrophils')}>
                                             <Info size={18} color={currentTheme.color} strokeWidth={2} />
                                         </TouchableOpacity>
@@ -559,9 +721,7 @@ export const CompleteBloodCountScreen = () => {
 
                                 <View style={[styles.cellCard, { backgroundColor: currentTheme.surfaceColor }]}>
                                     <View style={styles.cellHeader}>
-                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>
-                                            Linfócitos
-                                        </Text>
+                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>Linfócitos</Text>
                                         <TouchableOpacity onPress={() => showInfo('lymphocytes')}>
                                             <Info size={18} color={currentTheme.color} strokeWidth={2} />
                                         </TouchableOpacity>
@@ -573,9 +733,7 @@ export const CompleteBloodCountScreen = () => {
 
                                 <View style={[styles.cellCard, { backgroundColor: currentTheme.surfaceColor }]}>
                                     <View style={styles.cellHeader}>
-                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>
-                                            Monócitos
-                                        </Text>
+                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>Monócitos</Text>
                                         <TouchableOpacity onPress={() => showInfo('monocytes')}>
                                             <Info size={18} color={currentTheme.color} strokeWidth={2} />
                                         </TouchableOpacity>
@@ -587,9 +745,7 @@ export const CompleteBloodCountScreen = () => {
 
                                 <View style={[styles.cellCard, { backgroundColor: currentTheme.surfaceColor }]}>
                                     <View style={styles.cellHeader}>
-                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>
-                                            Eosinófilos
-                                        </Text>
+                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>Eosinófilos</Text>
                                         <TouchableOpacity onPress={() => showInfo('eosinophils')}>
                                             <Info size={18} color={currentTheme.color} strokeWidth={2} />
                                         </TouchableOpacity>
@@ -601,9 +757,7 @@ export const CompleteBloodCountScreen = () => {
 
                                 <View style={[styles.cellCard, { backgroundColor: currentTheme.surfaceColor }]}>
                                     <View style={styles.cellHeader}>
-                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>
-                                            Basófilos
-                                        </Text>
+                                        <Text style={[styles.cellName, { color: currentTheme.color }]}>Basófilos</Text>
                                         <TouchableOpacity onPress={() => showInfo('basophils')}>
                                             <Info size={18} color={currentTheme.color} strokeWidth={2} />
                                         </TouchableOpacity>
@@ -616,225 +770,48 @@ export const CompleteBloodCountScreen = () => {
                         </View>
                     </View>
                 )}
-            </View>
 
-        </ScrollView>
-    );
-
-    const renderReferencesTab = () => (
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-            <TopBarComponent />
-            
-            <View style={styles.welcomeSection}>
-                <Text style={[styles.welcomeTitle, { color: currentTheme.color }]}>
-                    Valores de Referência
-                </Text>
-                <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
-                    Valores normais para hemograma em medicina veterinária
-                </Text>
-            </View>
-
-            <View style={styles.formContainer}>
-                {['dog', 'cat'].map(species => (
-                    <View key={species} style={[styles.inputSection, { backgroundColor: currentTheme.surfaceColor }]}>
-                        <View style={styles.speciesHeader}>
-                            {species === 'dog' ? (
-                                <Dog size={24} color={currentTheme.color} />
-                            ) : (
-                                <Cat size={24} color={currentTheme.color} />
-                            )}
-                            <Text style={[styles.sectionTitle, { color: currentTheme.color }]}>
-                                {species === 'dog' ? 'Cães' : 'Gatos'}
-                            </Text>
-                        </View>
-                        
-                        <View style={styles.referenceGrid}>
-                            {Object.entries(referenceValues[species]).map(([parameter, range]) => (
-                                <View key={parameter} style={[styles.referenceCard, { backgroundColor: currentTheme.resultBackgroundColor }]}>
-                                    <Text style={[styles.referenceLabel, { color: currentTheme.color }]}>
-                                        {getParameterName(parameter)}
-                                    </Text>
-                                    <Text style={[styles.referenceValue, { color: currentTheme.color }]}>
-                                        {range.min} - {range.max} {getParameterUnit(parameter)}
-                                    </Text>
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                ))}
-            </View>
-
-        </ScrollView>
-    );
-
-    const getParameterName = (parameter) => {
-        const names = {
-            hematocrit: 'Hematócrito',
-            hemoglobin: 'Hemoglobina',
-            rbc: 'Hemácias',
-            wbc: 'Leucócitos',
-            neutrophils: 'Neutrófilos',
-            lymphocytes: 'Linfócitos',
-            monocytes: 'Monócitos',
-            eosinophils: 'Eosinófilos',
-            basophils: 'Basófilos',
-            platelets: 'Plaquetas',
-            mcv: 'VCM',
-            mch: 'HCM',
-            mchc: 'CHCM'
-        };
-        return names[parameter] || parameter;
-    };
-
-    const getParameterUnit = (parameter) => {
-        const units = {
-            hematocrit: '%',
-            hemoglobin: 'g/dL',
-            rbc: 'milhões/μL',
-            wbc: '/μL',
-            neutrophils: '/μL',
-            lymphocytes: '/μL',
-            monocytes: '/μL',
-            eosinophils: '/μL',
-            basophils: '/μL',
-            platelets: '/μL',
-            mcv: 'fL',
-            mch: 'pg',
-            mchc: 'g/dL'
-        };
-        return units[parameter] || '';
-    };
-
-    return (
-        <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
-            {/* Tab Content */}
-            {activeTab === 'application' ? renderApplicationTab() : renderReferencesTab()}
-            
-            {/* Tab Navigation - Bottom */}
-            <View style={[styles.tabContainer, { backgroundColor: currentTheme.surfaceColor }]}>
-                <TouchableOpacity
-                    style={[
-                        styles.tabButton,
-                        {
-                            backgroundColor: activeTab === 'application' 
-                                ? currentTheme.buttonColor 
-                                : 'transparent',
-                        },
-                    ]}
-                    onPress={() => setActiveTab('application')}
-                >
-                    <Activity 
-                        size={20} 
-                        color={activeTab === 'application' 
-                            ? currentTheme.activeTintColor 
-                            : currentTheme.inactiveTintColor} 
-                    />
-                    <Text
-                        style={[
-                            styles.tabText,
-                            {
-                                color: activeTab === 'application' 
-                                    ? currentTheme.activeTintColor 
-                                    : currentTheme.inactiveTintColor,
-                            },
-                        ]}
-                    >
-                        Hemograma
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[
-                        styles.tabButton,
-                        {
-                            backgroundColor: activeTab === 'references' 
-                                ? currentTheme.buttonColor 
-                                : 'transparent',
-                        },
-                    ]}
-                    onPress={() => setActiveTab('references')}
-                >
-                    <BookOpen 
-                        size={20} 
-                        color={activeTab === 'references' 
-                            ? currentTheme.activeTintColor 
-                            : currentTheme.inactiveTintColor} 
-                    />
-                    <Text
-                        style={[
-                            styles.tabText,
-                            {
-                                color: activeTab === 'references' 
-                                    ? currentTheme.activeTintColor 
-                                    : currentTheme.inactiveTintColor,
-                            },
-                        ]}
-                    >
-                        Referências
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            </ScrollView>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    scrollView: {
-        paddingBottom: 80, // Espaço para as tabs inferiores
-    },
-    tabContainer: {
-        flexDirection: 'row',
-        paddingHorizontal: 20,
-        paddingVertical: 15,
-        borderTopWidth: 1,
-        borderTopColor: 'rgba(0,0,0,0.1)',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-    },
-    tabButton: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        marginHorizontal: 4,
-        borderRadius: 12,
-        gap: 8,
-    },
-    tabText: {
-        fontSize: 16,
-        fontWeight: 'bold',
+    scrollContent: {
+        paddingBottom: 40,
     },
     welcomeSection: {
         paddingHorizontal: 20,
         paddingVertical: 25,
         alignItems: 'center',
     },
-    welcomeTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
     welcomeSubtitle: {
         fontSize: 16,
         textAlign: 'center',
         lineHeight: 22,
     },
-    speciesContainer: {
-        paddingHorizontal: 20,
-        paddingVertical: 20,
+    inputSection: {
+        padding: 16,
+        marginBottom: 16,
+        borderRadius: 12,
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 15,
+        textAlign: 'center',
+    },
+    inputGroup: {
+        paddingHorizontal: 20,
+    },
+    inputLabel: {
+        fontSize: 16,
+        textAlign: 'center',
+    },
+    centeredLabel: {
         textAlign: 'center',
     },
     speciesButtons: {
@@ -843,70 +820,69 @@ const styles = StyleSheet.create({
     },
     speciesButton: {
         alignItems: 'center',
-        padding: 15,
+        padding: 5,
         borderRadius: 15,
         borderWidth: 2,
         width: width * 0.4,
-        gap: 8,
     },
     speciesText: {
         fontSize: 16,
         fontWeight: 'bold',
-    },
-    formContainer: {
-        paddingHorizontal: 20,
-    },
-    inputSection: {
-        padding: 20,
-        marginBottom: 20,
-        borderRadius: 16,
+        marginTop: 5,
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 20,
-        gap: 12,
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 15,
+        width: width * 0.95,
+        borderRadius: 10,
+        gap: 15,
     },
     calculateButton: {
-        flex: 1,
+        flex: 7,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 16,
-        borderRadius: 12,
-        gap: 8,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        gap: 10,
     },
     resetButton: {
-        flex: 1,
+        flex: 3,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 16,
-        borderRadius: 12,
-        gap: 8,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
+        borderRadius: 10,
+        gap: 10,
     },
     buttonText: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
     },
     resultsSection: {
-        padding: 20,
-        borderRadius: 16,
-        marginBottom: 20,
+        padding: 16,
+        marginHorizontal: 20,
+        borderRadius: 12,
+        marginBottom: 12,
     },
     resultsTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 20,
+        marginBottom: 12,
         textAlign: 'center',
     },
     resultsGroup: {
-        marginBottom: 25,
+        marginBottom: 14,
     },
     groupTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 15,
+        marginBottom: 10,
         textAlign: 'center',
     },
     resultsGrid: {
@@ -918,7 +894,7 @@ const styles = StyleSheet.create({
         flex: 1,
         minWidth: '45%',
         padding: 12,
-        borderRadius: 12,
+        borderRadius: 10,
         marginBottom: 8,
     },
     resultHeader: {
@@ -945,8 +921,8 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     cellCard: {
-        padding: 16,
-        borderRadius: 12,
+        padding: 14,
+        borderRadius: 10,
         marginBottom: 8,
     },
     cellHeader: {
@@ -965,30 +941,4 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 4,
     },
-    speciesHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 10,
-        marginBottom: 20,
-    },
-    referenceGrid: {
-        gap: 10,
-    },
-    referenceCard: {
-        padding: 12,
-        borderRadius: 12,
-        marginBottom: 8,
-    },
-    referenceLabel: {
-        fontSize: 14,
-        fontWeight: '600',
-        marginBottom: 4,
-    },
-    referenceValue: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
 });
-
-export default CompleteBloodCountScreen;

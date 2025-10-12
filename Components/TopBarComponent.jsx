@@ -15,14 +15,30 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { resetToRoute } from './NavigationComponent';
 
 export const getFormattedDateTime = () => {
-  const now = new Date();
-  const formattedDate = now.toLocaleDateString('pt-BR');
-  const formattedTime = now.toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-  return { formattedDate, formattedTime };
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('pt-BR');
+    const formattedTime = now.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+    return { formattedDate, formattedTime };
 };
+
+export const scrollToResult = (scrollViewRef, ref) => {
+        if (!ref?.current || !scrollViewRef?.current) return;
+
+        ref.current.measureLayout(
+            scrollViewRef.current,
+            (x, y) => {
+                scrollViewRef.current.scrollTo({
+                    y: y - 40, // deslocamento para o topo visível
+                    animated: true,
+                });
+            },
+            (error) => console.log('Erro ao medir layout:', error)
+        );
+    };
+
 
 export const TopBarComponent = () => {
     const { currentTheme } = useTheme();
@@ -93,5 +109,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 10,
+        paddingHorizontal: 10,
     },
 });

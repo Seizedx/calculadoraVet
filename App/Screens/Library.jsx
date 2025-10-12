@@ -28,13 +28,13 @@ const Library = () => {
                     <Text style={[styles.subtitle, { color: currentTheme.color }]}>
                         Guia para consulta rápida de hemogramas, morfologia, cálculos, transfusões e muito mais.
                     </Text>
-                    <List.Accordion 
-                        title="📊 Valores de Referência" 
+                    <List.Accordion
+                        title="📊 Valores de Referência"
                         titleStyle={[styles.accordionTitle, { color: currentTheme.color }]}
-                        style={[styles.accordion, {backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
+                        style={[styles.accordion, { backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
                         titleNumberOfLines={2}
                     >
-                        <View style={[styles.accordionContent, {backgroundColor: currentTheme.backgroundColor}]}>
+                        <View style={[styles.accordionContent, { backgroundColor: currentTheme.backgroundColor }]}>
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>🐕 CÃES:</Text>
                             <Text style={[styles.subtext, { color: currentTheme.color }]}>
                                 • PCV: 35-57%{'\n'}
@@ -75,13 +75,13 @@ const Library = () => {
                             </TouchableOpacity>
                         </View>
                     </List.Accordion>
-                    <List.Accordion 
-                        title="🧾 Interpretação do Hemograma" 
+                    <List.Accordion
+                        title="🧾 Interpretação do Hemograma"
                         titleStyle={[styles.accordionTitle, { color: currentTheme.color }]}
-                        style={[styles.accordion, {backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
+                        style={[styles.accordion, { backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
                         titleNumberOfLines={2}
                     >
-                        <View style={[styles.accordionContent, {backgroundColor: currentTheme.backgroundColor}]}>
+                        <View style={[styles.accordionContent, { backgroundColor: currentTheme.backgroundColor }]}>
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>🔴 ERITROGRAMA:</Text>
                             <Text style={[styles.subtext, { color: currentTheme.color }]}>
                                 • Anemia regenerativa: ↑ reticulócitos (&gt;60k/µL), policromatofilia{'\n'}
@@ -111,13 +111,13 @@ const Library = () => {
                             </Text>
                         </View>
                     </List.Accordion>
-                    <List.Accordion 
-                        title="🔬 Morfologia e Achados Microscópicos" 
+                    <List.Accordion
+                        title="🔬 Morfologia e Achados Microscópicos"
                         titleStyle={[styles.accordionTitle, { color: currentTheme.color }]}
-                        style={[styles.accordion, {backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
+                        style={[styles.accordion, { backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
                         titleNumberOfLines={2}
                     >
-                        <View style={[styles.accordionContent, {backgroundColor: currentTheme.backgroundColor}]}>
+                        <View style={[styles.accordionContent, { backgroundColor: currentTheme.backgroundColor }]}>
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>🔴 Alterações Eritrocitárias:</Text>
                             <Text style={[styles.subtext, { color: currentTheme.color }]}>
                                 • Esferócitos: anemia hemolítica imunomediada{'\n'}
@@ -155,13 +155,13 @@ const Library = () => {
                             </TouchableOpacity>
                         </View>
                     </List.Accordion>
-                    <List.Accordion 
-                        title="🧮 Cálculos e Fórmulas Hematológicas" 
+                    <List.Accordion
+                        title="🧮 Cálculos e Fórmulas Hematológicas"
                         titleStyle={[styles.accordionTitle, { color: currentTheme.color }]}
-                        style={[styles.accordion, {backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
+                        style={[styles.accordion, { backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
                         titleNumberOfLines={2}
                     >
-                        <View style={[styles.accordionContent, {backgroundColor: currentTheme.backgroundColor}]}>
+                        <View style={[styles.accordionContent, { backgroundColor: currentTheme.backgroundColor }]}>
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>📏 Índices Hematimétricos:</Text>
                             <Text style={[styles.subtext, { color: currentTheme.color }]}>
                                 • VCM = (Hematócrito × 10) ÷ Eritrócitos{'\n'}
@@ -195,13 +195,13 @@ const Library = () => {
                             </Text>
                         </View>
                     </List.Accordion>
-                    <List.Accordion 
-                        title="🦠 Principais Doenças Hematológicas" 
+                    <List.Accordion
+                        title="🦠 Principais Doenças Hematológicas"
                         titleStyle={[styles.accordionTitle, { color: currentTheme.color }]}
-                        style={[styles.accordion, {backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
+                        style={[styles.accordion, { backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
                         titleNumberOfLines={2}
                     >
-                        <View style={[styles.accordionContent, {backgroundColor: currentTheme.backgroundColor}]}>
+                        <View style={[styles.accordionContent, { backgroundColor: currentTheme.backgroundColor }]}>
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>🩸 Anemia Hemolítica Imunomediada (IMHA):</Text>
                             <Text style={[styles.subtext, { color: currentTheme.color }]}>
                                 • Achados: esferócitos (&gt;5%), autoaglutinação{'\n'}
@@ -246,13 +246,13 @@ const Library = () => {
                             </TouchableOpacity>
                         </View>
                     </List.Accordion>
-                    <List.Accordion 
-                        title="💉 Coleta, Processamento e Transfusão" 
+                    <List.Accordion
+                        title="💉 Coleta, Processamento e Transfusão"
                         titleStyle={[styles.accordionTitle, { color: currentTheme.color }]}
-                        style={[styles.accordion, {backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
+                        style={[styles.accordion, { backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
                         titleNumberOfLines={2}
                     >
-                        <View style={[styles.accordionContent, {backgroundColor: currentTheme.backgroundColor}]}>
+                        <View style={[styles.accordionContent, { backgroundColor: currentTheme.backgroundColor }]}>
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>🩸 Técnicas de Coleta:</Text>
                             <Text style={[styles.subtext, { color: currentTheme.color }]}>
                                 • Veia jugular: mais confiável, menos hemólise{'\n'}
@@ -306,13 +306,13 @@ const Library = () => {
                             </TouchableOpacity>
                         </View>
                     </List.Accordion>
-                    <List.Accordion 
-                        title="🚨 Emergências e Situações Críticas" 
+                    <List.Accordion
+                        title="🚨 Emergências e Situações Críticas"
                         titleStyle={[styles.accordionTitle, { color: currentTheme.color }]}
-                        style={[styles.accordion, {backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
+                        style={[styles.accordion, { backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
                         titleNumberOfLines={2}
                     >
-                        <View style={[styles.accordionContent, {backgroundColor: currentTheme.backgroundColor}]}>
+                        <View style={[styles.accordionContent, { backgroundColor: currentTheme.backgroundColor }]}>
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>⚡ Valores Críticos:</Text>
                             <Text style={[styles.subtext, { color: currentTheme.color }]}>
                                 • Hematócrito &lt;15%: transfusão URGENTE{'\n'}
@@ -366,68 +366,68 @@ const Library = () => {
                             </Text>
                         </View>
                     </List.Accordion>
-                    <List.Accordion 
-                        title="🌐 Links e Recursos Científicos" 
+                    <List.Accordion
+                        title="🌐 Links e Recursos Científicos"
                         titleStyle={[styles.accordionTitle, { color: currentTheme.color }]}
-                        style={[styles.accordion, {backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
+                        style={[styles.accordion, { backgroundColor: currentTheme.accordionBackgroundColor, borderColor: currentTheme.color }]}
                         titleNumberOfLines={2}
                     >
-                        <View style={[styles.accordionContent, {backgroundColor: currentTheme.backgroundColor}]}>
+                        <View style={[styles.accordionContent, { backgroundColor: currentTheme.backgroundColor }]}>
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>📚 Manuais e Referências:</Text>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://www.merckvetmanual.com/hematologic-system")}>
                                 <Text style={styles.link}>🔗 Merck Veterinary Manual - Hematologia</Text>
                             </TouchableOpacity>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://eclinpath.com/hematology/")}>
                                 <Text style={styles.link}>🔗 eClinPath Cornell - Atlas Hematológico</Text>
                             </TouchableOpacity>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://www.idexx.com/en/veterinary/reference-laboratories/reference-values/")}>
                                 <Text style={styles.link}>🔗 IDEXX Reference Laboratory</Text>
                             </TouchableOpacity>
 
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>🏛️ Organizações Profissionais:</Text>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://www.asvcp.org/")}>
                                 <Text style={styles.link}>🔗 ASVCP - Patologia Clínica Veterinária</Text>
                             </TouchableOpacity>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://www.acvim.org/")}>
                                 <Text style={styles.link}>🔗 ACVIM - Medicina Interna Veterinária</Text>
                             </TouchableOpacity>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://www.wsava.org/guidelines/")}>
                                 <Text style={styles.link}>🔗 WSAVA Guidelines</Text>
                             </TouchableOpacity>
 
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>🇧🇷 Recursos Nacionais:</Text>
-                            
+
                             <TouchableOpacity onPress={() => openLink("http://www.cbpv.org.br/")}>
                                 <Text style={styles.link}>🔗 CBPV - Colégio Brasileiro Patologia</Text>
                             </TouchableOpacity>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://www.cfmv.gov.br/")}>
                                 <Text style={styles.link}>🔗 CFMV - Conselho Federal</Text>
                             </TouchableOpacity>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://www.sbcv.org.br/")}>
                                 <Text style={styles.link}>🔗 SBCV - Sociedade Brasileira Clínicos</Text>
                             </TouchableOpacity>
 
                             <Text style={[styles.sectionSubtitle, { color: currentTheme.color }]}>📖 Journals e Publicações:</Text>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://onlinelibrary.wiley.com/journal/19391676")}>
                                 <Text style={styles.link}>🔗 Veterinary Clinical Pathology Journal</Text>
                             </TouchableOpacity>
-                            
+
                             <TouchableOpacity onPress={() => openLink("https://www.sciencedirect.com/journal/the-veterinary-journal")}>
                                 <Text style={styles.link}>🔗 The Veterinary Journal</Text>
                             </TouchableOpacity>
                         </View>
                     </List.Accordion>
                     <View style={styles.footer}>
-                        <Text style={[styles.footerText, {color: currentTheme.color}]}>Em desenvolvimento.</Text>
+                        <Text style={[styles.footerText, { color: currentTheme.color }]}>Em desenvolvimento.</Text>
                     </View>
                 </View>
             </ScrollView>
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
     mainView: {
         flex: 1,
         marginBottom: 50,
-    },   
+    },
     subtitle: {
         fontSize: 16,
         textAlign: 'center',
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         paddingVertical: 2,
     },
-        footer: {
+    footer: {
         marginTop: 55,
         marginBottom: 15,
     },

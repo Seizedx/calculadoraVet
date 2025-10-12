@@ -8,10 +8,10 @@ const config = getDefaultConfig(__dirname);
 ////////////////////// NAO ESTAVA CONECTANDO, FIZ ISSO:
 
 
-    // rm -rf .expo
-    // rm -rf ios
-    // rm -rf android
-    // eas build:configure --platform android
+// rm -rf .expo
+// rm -rf ios
+// rm -rf android
+// eas build:configure --platform android
 
 
 // // Configura o Metro para usar o IP da sua máquina

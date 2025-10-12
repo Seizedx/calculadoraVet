@@ -1,5 +1,5 @@
 import { createStackNavigator } from '@react-navigation/stack';
-import  LoginScreen from './LoginScreen';
+import LoginScreen from './LoginScreen';
 import CreateNewAccount from './CreateNewAccount';
 import RecoverPassword from './RecoverPassword';
 

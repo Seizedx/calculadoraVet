@@ -14,7 +14,7 @@ import {
     Calculator
 } from 'lucide-react-native';
 import CustomTextInput from '../../../Components/CustomTextInput';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent, getFormattedDateTime } from '../../../Components/TopBarComponent';
 const { width, height } = Dimensions.get('window');
@@ -112,54 +112,32 @@ export default function CPDAVolumeCalculator() {
                 scrollViewRef.current?.scrollToEnd({ animated: true });
             }, 200);
 
-            //ASYNC STORAGE
-            const saveToHistory = async () => {
-                try {
-                    const historyEntry = {
-                        isCustom: true,
-                        patientName: patientName ?? 'Paciente Não Cadastrado',
-                        patientAge: patientAge ?? '',
-                        patientSpecies: patientRace ?? animalType,
-                        patientWeight: patientWeight ?? animalWeight,
-                        date: `${formattedDate}, ${formattedTime}`,///
-                        containerType: containerType,///
-                        calculationType: 'Volume de Sangue Doado + CPDA', /// alterados, o resto veio de result
-                        animalWeight: weight.toFixed(2),
-                        bloodVolume: bloodVolume.toFixed(2),
-                        cpdaVolume: cpdaVolume.toFixed(2),
-                        totalVolume: totalVolume.toFixed(2),
-                        syringeSize: syringe.toFixed(2),
-                        fullSyringesNeeded,
-                        partialSyringeInfo,
-                        bloodPerFullSyringe: bloodPerFullSyringe.toFixed(2),
-                        cpdaPerFullSyringe: cpdaPerFullSyringe.toFixed(2),
-                        totalPerFullSyringe: (bloodPerFullSyringe + cpdaPerFullSyringe).toFixed(2),
-                        animalType,
-                        customVolume,
+            const historyEntry = {
+                isCustom: true,
+                patientName: patientName ?? 'Paciente Não Cadastrado',
+                patientAge: patientAge ?? '',
+                patientSpecies: patientRace ?? animalType,
+                patientWeight: patientWeight ?? animalWeight,
+                date: `${formattedDate}, ${formattedTime}`,///
+                containerType: containerType,///
+                calculationType: 'Volume de Sangue Doado + CPDA', /// alterados, o resto veio de result
+                animalWeight: weight.toFixed(2),
+                bloodVolume: bloodVolume.toFixed(2),
+                cpdaVolume: cpdaVolume.toFixed(2),
+                totalVolume: totalVolume.toFixed(2),
+                syringeSize: syringe.toFixed(2),
+                fullSyringesNeeded,
+                partialSyringeInfo,
+                bloodPerFullSyringe: bloodPerFullSyringe.toFixed(2),
+                cpdaPerFullSyringe: cpdaPerFullSyringe.toFixed(2),
+                totalPerFullSyringe: (bloodPerFullSyringe + cpdaPerFullSyringe).toFixed(2),
+                animalType,
+                customVolume,
 
-                    };
+            };
 
-                // Recupera histórico já salvo
-                const existingHistory = await AsyncStorage.getItem('calculationHistory');
-                let historyArray;
+            AsyncStorageHistoryComponent('calculationHistory', historyEntry);
 
-                try {
-                    historyArray = existingHistory ? JSON.parse(existingHistory) : [];
-                    if (!Array.isArray(historyArray)) {
-                        historyArray = [historyArray];
-                    }
-                } catch (err) {
-                    historyArray = [];
-                }
-
-                historyArray.push(historyEntry);
-                await AsyncStorage.setItem('calculationHistory', JSON.stringify(historyArray));
-            } catch (error) {
-                console.error('Erro ao salvar o objeto:', error);
-            }
-        };
-
-        saveToHistory();
 
         } else {
             const volumeMinPerKg = animalType === 'Gato' ? 11 : 16;
@@ -233,59 +211,38 @@ export default function CPDAVolumeCalculator() {
                 scrollViewRef.current?.scrollToEnd({ animated: true });
             }, 200);
 
-            //ASYNC STORAGE
-            const saveToHistory = async () => {
-                try {
-                    const historyEntry = {
-                        isCustom: false,
-                        patientName: patientName ?? 'Paciente Não Cadastrado',
-                        patientAge: patientAge ?? '',
-                        patientSpecies: patientRace ?? animalType,
-                        patientWeight: patientWeight ?? animalWeight,
-                        date: `${formattedDate}, ${formattedTime}`,///
-                        containerType: containerType,///
-                        calculationType: 'Volume de Sangue Doado + CPDA', /// alterados, o resto veio de result
-                        animalWeight: weight.toFixed(2),
-                        bloodVolumeMin: bloodVolumeMin.toFixed(2),
-                        bloodVolumeMax: bloodVolumeMax.toFixed(2),
-                        cpdaVolumeMin: cpdaMin.toFixed(2),
-                        cpdaVolumeMax: cpdaMax.toFixed(2),
-                        totalVolumeMin: totalVolumeMin.toFixed(2),
-                        totalVolumeMax: totalVolumeMax.toFixed(2),
-                        syringeSize: syringe.toFixed(2),
-                        fullSyringesNeededMin,
-                        partialSyringeInfoMin,
-                        bloodPerFullSyringeMin: bloodPerFullSyringeMin.toFixed(2),
-                        cpdaPerFullSyringeMin: cpdaPerFullSyringeMin.toFixed(2),
-                        totalPerFullSyringeMin: (bloodPerFullSyringeMin + cpdaPerFullSyringeMin).toFixed(2),
-                        fullSyringesNeededMax,
-                        partialSyringeInfoMax,
-                        bloodPerFullSyringeMax: bloodPerFullSyringeMax.toFixed(2),
-                        cpdaPerFullSyringeMax: cpdaPerFullSyringeMax.toFixed(2),
-                        totalPerFullSyringeMax: (bloodPerFullSyringeMax + cpdaPerFullSyringeMax).toFixed(2),
-                        animalType,
-                    };
 
-                    // Recupera histórico já salvo
-                    const existingHistory = await AsyncStorage.getItem('calculationHistory');
-                    let historyArray;
-
-                    try {
-                        historyArray = existingHistory ? JSON.parse(existingHistory) : [];
-                        if (!Array.isArray(historyArray)) {
-                            historyArray = [historyArray];
-                        }
-                    } catch (err) {
-                        historyArray = [];
-                    }
-
-                    historyArray.push(historyEntry);
-                    await AsyncStorage.setItem('calculationHistory', JSON.stringify(historyArray));
-                } catch (error) {
-                    console.error('Erro ao salvar o objeto:', error);
-                }
+            const historyEntry = {
+                isCustom: false,
+                patientName: patientName ?? 'Paciente Não Cadastrado',
+                patientAge: patientAge ?? '',
+                patientSpecies: patientRace ?? animalType,
+                patientWeight: patientWeight ?? animalWeight,
+                date: `${formattedDate}, ${formattedTime}`,///
+                containerType: containerType,///
+                calculationType: 'Volume de Sangue Doado + CPDA', /// alterados, o resto veio de result
+                animalWeight: weight.toFixed(2),
+                bloodVolumeMin: bloodVolumeMin.toFixed(2),
+                bloodVolumeMax: bloodVolumeMax.toFixed(2),
+                cpdaVolumeMin: cpdaMin.toFixed(2),
+                cpdaVolumeMax: cpdaMax.toFixed(2),
+                totalVolumeMin: totalVolumeMin.toFixed(2),
+                totalVolumeMax: totalVolumeMax.toFixed(2),
+                syringeSize: syringe.toFixed(2),
+                fullSyringesNeededMin,
+                partialSyringeInfoMin,
+                bloodPerFullSyringeMin: bloodPerFullSyringeMin.toFixed(2),
+                cpdaPerFullSyringeMin: cpdaPerFullSyringeMin.toFixed(2),
+                totalPerFullSyringeMin: (bloodPerFullSyringeMin + cpdaPerFullSyringeMin).toFixed(2),
+                fullSyringesNeededMax,
+                partialSyringeInfoMax,
+                bloodPerFullSyringeMax: bloodPerFullSyringeMax.toFixed(2),
+                cpdaPerFullSyringeMax: cpdaPerFullSyringeMax.toFixed(2),
+                totalPerFullSyringeMax: (bloodPerFullSyringeMax + cpdaPerFullSyringeMax).toFixed(2),
+                animalType,
             };
-            saveToHistory();
+
+            AsyncStorageHistoryComponent('calculationHistory', historyEntry);
         }
     };
 

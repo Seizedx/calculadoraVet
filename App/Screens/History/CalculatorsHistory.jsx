@@ -4,7 +4,6 @@ import {
     Text,
     StyleSheet,
     ScrollView,
-    Alert,
     TouchableOpacity
 } from 'react-native';
 import {
@@ -12,7 +11,8 @@ import {
     Dog,
     Cat
 } from 'lucide-react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { loadHistory } from '../../../Components/AsyncStorageHistoryComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
 import { CustomAlertCopy } from '../../../Components/CustomAlertCopy';
@@ -24,23 +24,7 @@ export default function CalculatorsHistory() {
     const { currentTheme } = useTheme();
 
     useEffect(() => {
-        const loadHistory = async () => {
-            try {
-                const storedHistory = await AsyncStorage.getItem('calculationHistory');
-                if (storedHistory) {
-                    const parsedHistory = JSON.parse(storedHistory);
-                    const limitedHistory = parsedHistory.slice(-30);
-                    setHistory(limitedHistory);
-
-                    if (parsedHistory.length > 30) {
-                        await AsyncStorage.setItem('calculationHistory', JSON.stringify(limitedHistory));
-                    }
-                }
-            } catch (error) {
-                Alert.alert('Erro ao carregar histórico:', error.message);
-            }
-        };
-        loadHistory();
+        loadHistory('calculationHistory', setHistory);
     }, []);
 
     const VolumeOfBloodDonatedCalculator = (item) => {

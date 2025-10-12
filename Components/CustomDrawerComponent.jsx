@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
-        buttonZone: {
+    buttonZone: {
         marginTop: 10,
         padding: 10,
         width: width * 0.55,

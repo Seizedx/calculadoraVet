@@ -1,4 +1,4 @@
-import { 
+import {
     StyleSheet,
     View,
     ActivityIndicator,
@@ -18,7 +18,7 @@ const LoadingComponent = () => {
 }
 const styles = StyleSheet.create({
     loadingView: {
-      backgroundColor: 'transparent',
+        backgroundColor: 'transparent',
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',

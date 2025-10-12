@@ -157,12 +157,19 @@ export const AuthProvider = ({ children }) => {
             await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
             const response = await GoogleSignin.signIn();
 
-            if (!response?.data?.idToken) {
-                console.error('Falha ao obter ID Token do Google', response);
+            // Usuário cancelou o login
+            if (response?.type === 'cancelled') {
+                console.log('Login Google cancelado pelo usuário.');
                 return false;
             }
 
-            const credential = GoogleAuthProvider.credential(response.data.idToken);
+            const idToken = response?.data?.idToken;
+            if (!idToken) {
+                Alert.alert('Falha ao obter ID Token do Google', response);
+                return false;
+            }
+
+            const credential = GoogleAuthProvider.credential(idToken);
             const userCredential = await signInWithCredential(auth, credential);
             const user = userCredential.user;
 
@@ -196,10 +203,9 @@ export const AuthProvider = ({ children }) => {
                     break;
             }
             return false;
-        } finally {
-            console.log('Login Google Funcionou');
         }
     };
+
 
     const logoutUser = async () => {
         if (!auth.currentUser) {

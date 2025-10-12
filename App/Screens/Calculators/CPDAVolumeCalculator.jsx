@@ -15,7 +15,7 @@ import {
 import CustomTextInput from '../../../Components/CustomTextInput';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent, getFormattedDateTime } from '../../../Components/TopBarComponent';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent'
 const { width, height } = Dimensions.get('window');
 
 export default function CPDAVolumeCalculator() {
@@ -95,49 +95,28 @@ export default function CPDAVolumeCalculator() {
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 200);
 
-        //ASYNC STORAGE
-        const saveToHistory = async () => {
-            try {
-                const historyEntry = {
-                    patientName: patientName ?? 'Paciente Não Cadastrado',
-                    patientAge: patientAge ?? '',
-                    patientSpecies: patientRace ?? '',
-                    patientWeight: patientWeight ?? '',
-                    date: `${formattedDate}, ${formattedTime}`,///
-                    containerType: containerType,///
-                    calculationType: 'Volume CPDA x Sangue', /// alterados, o resto veio de result
-                    bloodVolume: blood.toFixed(2),
-                    cpdaVolume: cpda.toFixed(2),
-                    totalVolume: totalVolume.toFixed(2),
-                    syringeSize: syringe.toFixed(2),
-                    fullSyringesNeeded: fullSyringesNeeded,
-                    partialSyringeInfo: partialSyringeInfo,
-                    bloodPerFullSyringe: bloodPerFullSyringe.toFixed(2),
-                    cpdaPerFullSyringe: cpdaPerFullSyringe.toFixed(2),
-                    totalPerFullSyringe: (bloodPerFullSyringe + cpdaPerFullSyringe).toFixed(2),
-                };
 
-                // Recupera histórico já salvo
-                const existingHistory = await AsyncStorage.getItem('calculationHistory');
-                let historyArray;
+        const historyEntry = {
+            patientName: patientName ?? 'Paciente Não Cadastrado',
+            patientAge: patientAge ?? '',
+            patientSpecies: patientRace ?? '',
+            patientWeight: patientWeight ?? '',
+            date: `${formattedDate}, ${formattedTime}`,///
+            containerType: containerType,///
+            calculationType: 'Volume CPDA x Sangue', /// alterados, o resto veio de result
+            bloodVolume: blood.toFixed(2),
+            cpdaVolume: cpda.toFixed(2),
+            totalVolume: totalVolume.toFixed(2),
+            syringeSize: syringe.toFixed(2),
+            fullSyringesNeeded: fullSyringesNeeded,
+            partialSyringeInfo: partialSyringeInfo,
+            bloodPerFullSyringe: bloodPerFullSyringe.toFixed(2),
+            cpdaPerFullSyringe: cpdaPerFullSyringe.toFixed(2),
+            totalPerFullSyringe: (bloodPerFullSyringe + cpdaPerFullSyringe).toFixed(2),
 
-                try {
-                    historyArray = existingHistory ? JSON.parse(existingHistory) : [];
-                    if (!Array.isArray(historyArray)) {
-                        historyArray = [historyArray];
-                    }
-                } catch (err) {
-                    historyArray = [];
-                }
-
-                historyArray.push(historyEntry);
-                await AsyncStorage.setItem('calculationHistory', JSON.stringify(historyArray));
-            } catch (error) {
-                console.error('Erro ao salvar o objeto:', error);
-            }
         };
 
-        saveToHistory();
+        AsyncStorageHistoryComponent('calculationHistory', historyEntry);
     };
 
     return (

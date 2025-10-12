@@ -13,103 +13,164 @@ import { Info, Dog, Cat } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
-export default function HematologicalIndicesReferences() {
+export default function CompleteHemogramReferences() {
     const { currentTheme } = useTheme();
     const [selectedSpecies, setSelectedSpecies] = useState('dog');
-    const [selectedIndex, setSelectedIndex] = useState('mcv');
+    const [selectedIndex, setSelectedIndex] = useState('hemacias');
 
     const referenceValues = {
         dog: {
-            mcv: '60 - 77 fL',
-            mch: '19 - 24 pg',
-            mchc: '32 - 36 g/dL',
+            hemacias: '5.5 – 8.5 x10⁶/µL',
+            hemoglobina: '12 – 18 g/dL',
+            hematocrito: '37 – 55%',
+            leucocitos: '6,000 – 17,000/µL',
+            plaquetas: '200,000 – 500,000/µL',
         },
         cat: {
-            mcv: '39 - 55 fL',
-            mch: '13 - 17 pg',
-            mchc: '30 - 36 g/dL',
+            hemacias: '5.0 – 10.0 x10⁶/µL',
+            hemoglobina: '8 – 15 g/dL',
+            hematocrito: '24 – 45%',
+            leucocitos: '5,500 – 19,500/µL',
+            plaquetas: '300,000 – 700,000/µL',
         },
     };
 
     const indicesData = {
-        mcv: {
-            name: 'VCM (Volume Corpuscular Médio)',
+        hemacias: {
+            name: 'Hemácias (Eritrócitos)',
             description:
-                'Mede o tamanho médio das hemácias. Classifica as anemias como microcíticas, normocíticas ou macrocíticas.',
-            normal: 'Normal: Hemácias de tamanho adequado.',
+                'As hemácias são responsáveis pelo transporte de oxigênio. Sua contagem avalia a oxigenação e o estado anêmico do paciente.',
+            normal: 'Normal: oxigenação adequada e perfusão tecidual normal.',
             conditions: [
                 {
-                    type: 'Baixo (Microcitose)',
+                    type: 'Baixo (Anemia)',
                     color: '#f59e0b',
                     causes: [
-                        'Anemia ferropriva',
+                        'Perda sanguínea aguda ou crônica',
+                        'Hemólise',
+                        'Deficiência de ferro, B12 ou folato',
                         'Doença renal crônica',
-                        'Anemia por doença crônica',
                     ],
-                    notes: 'Hemácias menores que o normal.',
+                    notes: 'Redução do transporte de oxigênio e palidez de mucosas.',
                 },
                 {
-                    type: 'Alto (Macrocitose)',
+                    type: 'Alto (Policitemia)',
                     color: '#ef4444',
                     causes: [
-                        'Anemia megaloblástica (deficiência de B12/folato)',
-                        'Doença hepática',
-                        'Hipotireoidismo',
+                        'Desidratação',
+                        'Policitemia vera (rara)',
+                        'Hipóxia crônica (cardiopatias, altitude)',
                     ],
-                    notes: 'Hemácias maiores que o normal.',
+                    notes: 'Aumento da viscosidade sanguínea e risco trombótico.',
                 },
             ],
         },
-        mch: {
-            name: 'HCM (Hemoglobina Corpuscular Média)',
+        hemoglobina: {
+            name: 'Hemoglobina (Hb)',
             description:
-                'Indica a quantidade média de hemoglobina por hemácia, relacionada à coloração (cromia).',
-            normal: 'Normal: Células com coloração adequada.',
+                'Proteína que transporta oxigênio no sangue. Sua concentração reflete diretamente a capacidade de oxigenação.',
+            normal: 'Normal: transporte eficiente de oxigênio.',
             conditions: [
                 {
-                    type: 'Baixo (Hipocromia)',
+                    type: 'Baixo (Anemia)',
                     color: '#f59e0b',
                     causes: [
-                        'Anemia ferropriva',
-                        'Talassemia',
-                        'Anemia de doença crônica',
+                        'Hemorragia',
+                        'Deficiência de ferro ou vitamina B12',
+                        'Doenças crônicas',
                     ],
-                    notes: 'Hemácias pálidas devido à baixa hemoglobina.',
+                    notes: 'Mucosas pálidas, letargia e fraqueza.',
                 },
                 {
-                    type: 'Alto (Hipercromia)',
+                    type: 'Alto',
                     color: '#ef4444',
-                    causes: [
-                        'Desidratação severa',
-                        'Esferocitose hereditária (raro)',
-                    ],
-                    notes: 'Células mais concentradas em hemoglobina.',
+                    causes: ['Desidratação', 'Policitemia', 'Hipóxia crônica'],
+                    notes: 'Pode ocorrer aumento aparente pela contração do plasma.',
                 },
             ],
         },
-        mchc: {
-            name: 'CHCM (Concentração de Hemoglobina Corpuscular Média)',
+        hematocrito: {
+            name: 'Hematócrito (Ht)',
             description:
-                'Mostra a concentração de hemoglobina dentro das hemácias, importante para avaliar coloração e integridade celular.',
-            normal: 'Normal: Concentração adequada de hemoglobina.',
+                'Proporção de hemácias no volume total de sangue. Indica hidratação e concentração sanguínea.',
+            normal: 'Normal: equilíbrio entre hemácias e plasma.',
             conditions: [
                 {
                     type: 'Baixo',
                     color: '#f59e0b',
                     causes: [
-                        'Anemia ferropriva',
-                        'Hemodiluição',
+                        'Anemia',
+                        'Hemodiluição (sobrecarga hídrica)',
+                        'Hemorragia',
                     ],
-                    notes: 'Hemoglobina insuficiente em relação ao volume celular.',
+                    notes: 'Reflete perda de massa eritrocitária ou excesso de líquidos.',
                 },
                 {
                     type: 'Alto',
                     color: '#ef4444',
                     causes: [
                         'Desidratação',
-                        'Esferocitose hereditária',
+                        'Policitemia',
                     ],
-                    notes: 'Células mais densas em hemoglobina.',
+                    notes: 'Sangue mais viscoso, risco de hipoperfusão tecidual.',
+                },
+            ],
+        },
+        leucocitos: {
+            name: 'Leucócitos (Glóbulos Brancos)',
+            description:
+                'Células de defesa responsáveis pela resposta imune. Alterações indicam infecções, inflamações ou imunossupressão.',
+            normal: 'Normal: defesa adequada contra agentes infecciosos.',
+            conditions: [
+                {
+                    type: 'Baixo (Leucopenia)',
+                    color: '#f59e0b',
+                    causes: [
+                        'Infecções virais severas',
+                        'Imunossupressão medicamentosa',
+                        'Doença medular',
+                    ],
+                    notes: 'Maior risco de infecção devido à baixa defesa.',
+                },
+                {
+                    type: 'Alto (Leucocitose)',
+                    color: '#ef4444',
+                    causes: [
+                        'Infecção bacteriana',
+                        'Inflamação aguda',
+                        'Estresse fisiológico',
+                        'Neoplasias hematológicas',
+                    ],
+                    notes: 'Sinal de resposta inflamatória ou infecção ativa.',
+                },
+            ],
+        },
+        plaquetas: {
+            name: 'Plaquetas (Trombócitos)',
+            description:
+                'Responsáveis pela coagulação e controle de sangramentos. Alterações podem causar risco hemorrágico ou trombótico.',
+            normal: 'Normal: hemostasia preservada.',
+            conditions: [
+                {
+                    type: 'Baixo (Trombocitopenia)',
+                    color: '#f59e0b',
+                    causes: [
+                        'Doenças autoimunes (Ehrlichiose, Lupus)',
+                        'Destruição periférica',
+                        'Doença medular',
+                        'Consumo excessivo (CIVD)',
+                    ],
+                    notes: 'Risco aumentado de sangramento e petéquias.',
+                },
+                {
+                    type: 'Alto (Trombocitose)',
+                    color: '#ef4444',
+                    causes: [
+                        'Inflamação crônica',
+                        'Recuperação pós-hemorragia',
+                        'Doenças mieloproliferativas',
+                    ],
+                    notes: 'Risco aumentado de trombose e agregação plaquetária excessiva.',
                 },
             ],
         },
@@ -125,7 +186,7 @@ export default function HematologicalIndicesReferences() {
 
                 <View style={styles.welcomeSection}>
                     <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
-                        Referências e interpretações de VCM, HCM e CHCM.
+                        Referências e interpretações do hemograma completo.
                     </Text>
                 </View>
 
@@ -243,26 +304,20 @@ export default function HematologicalIndicesReferences() {
                     ]}
                 >
                     <View style={styles.cardHeader}>
-                        <Text
-                            style={[styles.cardTitle, { color: currentTheme.color }]}
-                        >
+                        <Text style={[styles.cardTitle, { color: currentTheme.color }]}>
                             {selectedData.name}
                         </Text>
                         <Info size={20} color={currentTheme.color} strokeWidth={2} />
                     </View>
 
-                    <Text
-                        style={[styles.description, { color: currentTheme.color }]}
-                    >
+                    <Text style={[styles.description, { color: currentTheme.color }]}>
                         {selectedData.description}
                     </Text>
 
                     <Text style={[styles.rangeText, { color: currentTheme.color }]}>
                         Valor de referência ({selectedSpecies === 'dog' ? 'Canino' : 'Felino'}):
                     </Text>
-                    <Text
-                        style={[styles.refValue, { color: currentTheme.color }]}
-                    >
+                    <Text style={[styles.refValue, { color: currentTheme.color }]}>
                         {refValue}
                     </Text>
 
@@ -273,25 +328,12 @@ export default function HematologicalIndicesReferences() {
                     {selectedData.conditions.map((cond, idx) => (
                         <View
                             key={idx}
-                            style={[
-                                styles.conditionCard,
-                                { borderColor: cond.color },
-                            ]}
+                            style={[styles.conditionCard, { borderColor: cond.color }]}
                         >
-                            <Text
-                                style={[
-                                    styles.conditionTitle,
-                                    { color: cond.color },
-                                ]}
-                            >
+                            <Text style={[styles.conditionTitle, { color: cond.color }]}>
                                 {cond.type}
                             </Text>
-                            <Text
-                                style={[
-                                    styles.conditionLabel,
-                                    { color: currentTheme.color },
-                                ]}
-                            >
+                            <Text style={[styles.conditionLabel, { color: currentTheme.color }]}>
                                 Causas comuns:
                             </Text>
                             {cond.causes.map((cause, i) => (
@@ -302,9 +344,7 @@ export default function HematologicalIndicesReferences() {
                                     • {cause}
                                 </Text>
                             ))}
-                            <Text
-                                style={[styles.conditionNotes, { color: currentTheme.color }]}
-                            >
+                            <Text style={[styles.conditionNotes, { color: currentTheme.color }]}>
                                 {cond.notes}
                             </Text>
                         </View>
@@ -312,10 +352,7 @@ export default function HematologicalIndicesReferences() {
                 </View>
 
                 <Text
-                    style={[
-                        styles.footerNote,
-                        { color: currentTheme.color },
-                    ]}
+                    style={[styles.footerNote, { color: currentTheme.color }]}
                 >
                     * Valores podem variar conforme espécie, método e laboratório.
                 </Text>
@@ -366,6 +403,7 @@ const styles = StyleSheet.create({
     selector: {
         flexDirection: 'row',
         justifyContent: 'center',
+        flexWrap: 'wrap',
         gap: 10,
         marginVertical: 10,
     },
@@ -373,6 +411,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 15,
         borderRadius: 8,
+        marginVertical: 4,
     },
     selectorText: {
         fontSize: 16,

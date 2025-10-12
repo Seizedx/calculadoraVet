@@ -11,16 +11,27 @@ import {
 } from 'react-native';
 import { Calculator, RotateCcw, Dog, Cat } from 'lucide-react-native';
 import { useTheme } from '../../../Components/ThemeComponent';
-import { TopBarComponent } from '../../../Components/TopBarComponent';
-import { analyzePlateletCount } from './Platelet';
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
+import { TopBarComponent, getFormattedDateTime } from '../../../Components/TopBarComponent';
 
 const { width } = Dimensions.get('window');
 
 export default function PlateletCountScreen() {
+    let patientName; ////////////////////////////////////////TEMPORÁRIO, ATÉ FAZER O COMPONENT
+    let patientAge; ////////////////////////////////////////TEMPORÁRIO, ATÉ FAZER O COMPONENT
+    let patientRace; ////////////////////////////////////////TEMPORÁRIO, ATÉ FAZER O COMPONENT
+    let patientWeight; ////////////////////////////////////////TEMPORÁRIO, ATÉ FAZER O COMPONENT
     const { currentTheme } = useTheme();
     const [count, setCount] = useState(0);
-    const [selectedSpecies, setSelectedSpecies] = useState<'dog' | 'cat'>('dog');
-    const [microLiters, setMicroLiters] = useState<string>('10000');
+    const [selectedSpecies, setSelectedSpecies] = useState('dog');
+    const [microLiters, setMicroLiters] = useState('10000');
+    const { formattedDate, formattedTime } = getFormattedDateTime();
+
+
+    const REFERENCE_VALUES = {
+        dog: { min: 200000, max: 500000 },
+        cat: { min: 300000, max: 800000 },
+    };
 
     const resetCount = () => {
         Alert.alert(
@@ -33,35 +44,57 @@ export default function PlateletCountScreen() {
         );
     };
 
-    const incrementCount = () => {
-        setCount(prev => prev + 1);
-    };
-
-    const decrementCount = () => {
-        if (count > 0) {
-            setCount(prev => prev - 1);
-        }
-    };
+    const incrementCount = () => setCount(prev => prev + 1);
+    const decrementCount = () => count > 0 && setCount(prev => prev - 1);
 
     const analyzeResults = () => {
         if (count === 0) {
             Alert.alert('Aviso', 'Por favor, realize a contagem antes de analisar.');
             return;
         }
-        if (microLiters === '') {
+        if (!microLiters) {
             Alert.alert('Aviso', 'Por favor, digitar um valor fator de conversão.');
             return;
         }
 
         const microLitersNumber = Number(microLiters) || 0;
         const plateletCountPerMicroLiter = count * microLitersNumber;
-        const analysis = analyzePlateletCount(plateletCountPerMicroLiter, selectedSpecies);
+
+        const ref = REFERENCE_VALUES[selectedSpecies];
+        let status, interpretation, color;
+
+        if (plateletCountPerMicroLiter < ref.min) {
+            status = 'Baixo';
+            interpretation = 'Trombocitopenia - Contagem de plaquetas abaixo do normal';
+            color = '#ef4444';
+        } else if (plateletCountPerMicroLiter > ref.max) {
+            status = 'Alto';
+            interpretation = 'Trombocitose - Contagem de plaquetas acima do normal';
+            color = '#f59e0b';
+        } else {
+            status = 'Normal';
+            interpretation = 'Contagem de plaquetas dentro dos valores normais';
+            color = '#10b981';
+        }
 
         Alert.alert(
             'Análise dos Resultados',
-            `Contagem: ${plateletCountPerMicroLiter.toLocaleString()}/µL\n\nInterpretação: ${analysis.interpretation}`,
+            `Contagem: ${plateletCountPerMicroLiter.toLocaleString()}/µL\nStatus: ${status}\nInterpretação: ${interpretation}`,
             [{ text: 'OK' }]
         );
+
+        const historyEntry = {
+            patientName: patientName ?? 'Paciente Não Cadastrado',
+            patientAge: patientAge ?? '',
+            patientSpecies: patientRace ?? selectedSpecies,
+            patientWeight: patientWeight ?? '',
+            date: `${formattedDate}, ${formattedTime}`,///
+            microLitersNumber: microLitersNumber,
+            plateletCount: plateletCountPerMicroLiter ?? 0,
+        };
+
+        AsyncStorageHistoryComponent('plateletHistory', historyEntry);
+
     };
 
     return (
@@ -131,24 +164,9 @@ export default function PlateletCountScreen() {
                 </View>
 
                 <View style={styles.counterContainer}>
-                    <View
-                        style={[
-                            styles.countDisplay,
-                            { borderColor: currentTheme.color },
-                        ]}
-                    >
-                        <View style={styles.countDisplayIcon}>
-                            <Calculator size={50} color={currentTheme.buttonColor} />
-                        </View>
-                        <Text style={[styles.countText, { color: currentTheme.color }]}>
-                            {count}
-                        </Text>
-                        <Text
-                            style={[
-                                styles.countLabel,
-                                { color: currentTheme.inactiveTintColor },
-                            ]}
-                        >
+                    <View style={[styles.countDisplay, { borderColor: currentTheme.color }]}>
+                        <Text style={[styles.countText, { color: currentTheme.color }]}>{count}</Text>
+                        <Text style={[styles.countLabel, { color: currentTheme.inactiveTintColor }]}>
                             Plaquetas Contadas
                         </Text>
                     </View>
@@ -156,92 +174,42 @@ export default function PlateletCountScreen() {
 
                 <View style={styles.controlsContainer}>
                     <TouchableOpacity
-                        style={[
-                            styles.countButton,
-                            { backgroundColor: currentTheme.minusButtonColor },
-                        ]}
+                        style={[styles.countButton, { backgroundColor: currentTheme.minusButtonColor }]}
                         onPress={decrementCount}
                     >
-                        <Text
-                            style={[
-                                styles.countButtonText,
-                                { color: currentTheme.color },
-                            ]}
-                        >
-                            -
-                        </Text>
+                        <Text style={[styles.countButtonText, { color: currentTheme.color }]}>-</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[
-                            styles.mainCountButton,
-                            { backgroundColor: currentTheme.plusButtonColor },
-                        ]}
+                        style={[styles.mainCountButton, { backgroundColor: currentTheme.plusButtonColor }]}
                         onPress={incrementCount}
                     >
-                        <Text
-                            style={[
-                                styles.mainCountButtonText,
-                                { color: currentTheme.color },
-                            ]}
-                        >
-                            +1
-                        </Text>
+                        <Text style={[styles.mainCountButtonText, { color: currentTheme.color }]}>+1</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[
-                            styles.countButton,
-                            { backgroundColor: currentTheme.plusAltButtonColor },
-                        ]}
+                        style={[styles.countButton, { backgroundColor: currentTheme.plusAltButtonColor }]}
                         onPress={incrementCount}
                     >
-                        <Text
-                            style={[
-                                styles.countButtonText,
-                                { color: currentTheme.color },
-                            ]}
-                        >
-                            +
-                        </Text>
+                        <Text style={[styles.countButtonText, { color: currentTheme.color }]}>+</Text>
                     </TouchableOpacity>
                 </View>
 
                 <View style={styles.actionButtons}>
                     <TouchableOpacity
-                        style={[
-                            styles.actionButton,
-                            { backgroundColor: currentTheme.quickAccessBackgroundColor },
-                        ]}
+                        style={[styles.actionButton, { backgroundColor: currentTheme.quickAccessBackgroundColor }]}
                         onPress={resetCount}
                     >
                         <RotateCcw size={24} color={currentTheme.color} />
-                        <Text
-                            style={[
-                                styles.actionButtonText,
-                                { color: currentTheme.color },
-                            ]}
-                        >
-                            Resetar
-                        </Text>
+                        <Text style={[styles.actionButtonText, { color: currentTheme.color }]}>Resetar</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[
-                            styles.actionButton,
-                            { backgroundColor: currentTheme.quickAccessBackgroundColor },
-                        ]}
+                        style={[styles.actionButton, { backgroundColor: currentTheme.quickAccessBackgroundColor }]}
                         onPress={analyzeResults}
                     >
                         <Calculator size={24} color={currentTheme.color} />
-                        <Text
-                            style={[
-                                styles.actionButtonText,
-                                { color: currentTheme.color },
-                            ]}
-                        >
-                            Analisar
-                        </Text>
+                        <Text style={[styles.actionButtonText, { color: currentTheme.color }]}>Analisar</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -250,53 +218,24 @@ export default function PlateletCountScreen() {
                         Fator de conversão (µL):
                     </Text>
                     <TextInput
-                        style={[
-                            styles.textInput,
-                            {
-                                color: currentTheme.color,
-                                borderColor: currentTheme.inactiveTintColor,
-                            },
-                        ]}
+                        style={[styles.textInput, { color: currentTheme.color, borderColor: currentTheme.inactiveTintColor }]}
                         placeholder="Digite o valor"
                         placeholderTextColor={currentTheme.inactiveTintColor}
                         value={microLiters}
-                        onChangeText={(text) => {
-                            const numeric = text.replace(/[^0-9]/g, '');
-                            setMicroLiters(numeric);
-                        }}
+                        onChangeText={text => setMicroLiters(text.replace(/[^0-9]/g, ''))}
                         keyboardType="numeric"
-                        returnKeyType="done"
                     />
                 </View>
 
-                <View
-                    style={[
-                        styles.referenceCard,
-                        {
-                            backgroundColor: currentTheme.quickAccessBackgroundColor,
-                            borderColor: currentTheme.color,
-                        },
-                    ]}
-                >
-                    <Text
-                        style={[
-                            styles.referenceTitle,
-                            { color: currentTheme.color },
-                        ]}
-                    >
+                <View style={[styles.referenceCard, { backgroundColor: currentTheme.quickAccessBackgroundColor, borderColor: currentTheme.color }]}>
+                    <Text style={[styles.referenceTitle, { color: currentTheme.color }]}>
                         Valores de Referência ({selectedSpecies === 'dog' ? 'Cão' : 'Gato'})
                     </Text>
-                    <Text
-                        style={[
-                            styles.referenceText,
-                            { color: currentTheme.inactiveTintColor },
-                        ]}
-                    >
-                        {selectedSpecies === 'dog'
-                            ? 'Normal: 200.000 - 500.000/µL'
-                            : 'Normal: 300.000 - 800.000/µL'}
+                    <Text style={[styles.referenceText, { color: currentTheme.inactiveTintColor }]}>
+                        Normal: {REFERENCE_VALUES[selectedSpecies].min.toLocaleString()} - {REFERENCE_VALUES[selectedSpecies].max.toLocaleString()}/µL
                     </Text>
                 </View>
+
             </ScrollView>
         </View>
     );
@@ -304,88 +243,83 @@ export default function PlateletCountScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 1
     },
     speciesContainer: {
         paddingHorizontal: 20,
-        paddingVertical: 20,
+        paddingVertical: 25
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 15,
-        textAlign: 'center',
+        textAlign: 'center'
     },
     speciesButtons: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'space-around'
     },
     speciesButton: {
         alignItems: 'center',
         padding: 5,
         borderRadius: 15,
         borderWidth: 2,
-        width: width * 0.4,
+        width: width * 0.4
     },
     speciesText: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
     counterContainer: {
         paddingHorizontal: 50,
-        paddingVertical: 10,
+        paddingVertical: 10
     },
     countDisplay: {
         alignItems: 'center',
         padding: 10,
         borderRadius: 20,
-        borderWidth: 2,
-    },
-    countDisplayIcon: {
-        position: 'absolute',
-        left: 10,
-        bottom: '40%',
+        borderWidth: 2
     },
     countText: {
         fontSize: 55,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
     countLabel: {
-        fontSize: 16,
+        fontSize: 16
     },
     controlsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         paddingHorizontal: 20,
-        paddingVertical: 20,
+        paddingVertical: 20
     },
     countButton: {
         width: 60,
         height: 60,
         borderRadius: 30,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     countButtonText: {
         fontSize: 32,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
     mainCountButton: {
         width: 120,
         height: 120,
         borderRadius: 60,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     mainCountButtonText: {
         fontSize: 32,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
     actionButtons: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         paddingHorizontal: 20,
-        marginBottom: 20,
+        marginBottom: 20
     },
     actionButton: {
         flexDirection: 'row',
@@ -393,23 +327,24 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 15,
         borderRadius: 10,
-        gap: 10,
+        gap: 10
     },
     actionButtonText: {
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
     inputContainer: {
         paddingHorizontal: 20,
         marginBottom: 20,
         flexDirection: 'row',
-        alignItems: 'center', justifyContent: 'center',
-        gap: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 10
     },
     inputLabel: {
         fontSize: 16,
         marginBottom: 5,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
     },
     textInput: {
         width: width * 0.4,
@@ -418,21 +353,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 10,
         fontSize: 16,
-        textAlign: 'center',
+        textAlign: 'center'
     },
     referenceCard: {
         marginHorizontal: 20,
         marginBottom: 20,
         padding: 20,
         borderRadius: 15,
-        borderWidth: 1,
+        borderWidth: 1
     },
     referenceTitle: {
         fontSize: 16,
         fontWeight: 'bold',
-        marginBottom: 5,
+        marginBottom: 5
     },
     referenceText: {
-        fontSize: 14,
+        fontSize: 14
     },
 });

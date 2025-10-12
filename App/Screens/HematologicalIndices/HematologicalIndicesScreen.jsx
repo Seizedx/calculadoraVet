@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     View,
     StyleSheet,
@@ -7,13 +6,17 @@ import {
     TouchableOpacity,
     Alert,
     Keyboard,
+    Dimensions,
 } from 'react-native';
-import { TopBarComponent } from '../../../Components/TopBarComponent';
+import { TopBarComponent, getFormattedDateTime } from '../../../Components/TopBarComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { useNavigation } from '@react-navigation/native';
 import CustomTextInput from '../../../Components/CustomTextInput';
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import { useState, useRef } from 'react';
 import { Calculator, Info, RotateCcw } from 'lucide-react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export const HematologicalIndicesScreen = () => {
     const { currentTheme } = useTheme();
@@ -35,43 +38,8 @@ export const HematologicalIndicesScreen = () => {
     const patientAge = '';
     const patientRace = '';
     const patientWeight = '';
-    const formattedDate = new Date().toLocaleDateString();
-    const formattedTime = new Date().toLocaleTimeString();
+    const { formattedDate, formattedTime } = getFormattedDateTime();
 
-    const saveToHistory = async (indices) => {
-        try {
-            const historyEntry = {
-                patientName: patientName || 'Paciente Não Cadastrado',
-                patientAge: patientAge || '',
-                patientSpecies: patientRace || '',
-                patientWeight: patientWeight || '',
-                date: `${formattedDate}, ${formattedTime}`,
-                calculationType: 'Índices Hematológicos',
-                hematocrit,
-                hemoglobin,
-                rbcCount,
-                mcv: indices.mcv,
-                mch: indices.mch,
-                mchc: indices.mchc,
-            };
-
-            const existingHistory = await AsyncStorage.getItem('HematologicalIndicesHistory');
-            let historyArray;
-            try {
-                historyArray = existingHistory ? JSON.parse(existingHistory) : [];
-                if (!Array.isArray(historyArray)) {
-                    historyArray = [historyArray];
-                }
-            } catch (err) {
-                historyArray = [];
-            }
-
-            historyArray.push(historyEntry);
-            await AsyncStorage.setItem('HematologicalIndicesHistory', JSON.stringify(historyArray));
-        } catch (error) {
-            console.error('Erro ao salvar o objeto:', error);
-        }
-    };
 
     const calculateIndices = async () => {
         if (!hematocrit.trim() || !hemoglobin.trim() || !rbcCount.trim()) {
@@ -106,7 +74,22 @@ export const HematologicalIndicesScreen = () => {
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 200);
 
-        await saveToHistory(indices);
+        const historyEntry = {
+            patientName: patientName || 'Paciente Não Cadastrado',
+            patientAge: patientAge || '',
+            patientSpecies: patientRace || '',
+            patientWeight: patientWeight || '',
+            date: `${formattedDate}, ${formattedTime}`,
+            calculationType: 'Índices Hematológicos',
+            hematocrit,
+            hemoglobin,
+            rbcCount,
+            mcv: indices.mcv,
+            mch: indices.mch,
+            mchc: indices.mchc,
+        };
+
+        AsyncStorageHistoryComponent('HematologicalIndicesHistory', historyEntry);
     };
 
     const resetForm = () => {
@@ -213,7 +196,7 @@ export const HematologicalIndicesScreen = () => {
                         </Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[styles.resetButton, { backgroundColor: currentTheme.unselectedButtonColor }]}
+                        style={[styles.resetButton, { backgroundColor: currentTheme.inactiveTintColor }]}
                         onPress={resetForm}
                         activeOpacity={0.8}
                     >
@@ -322,42 +305,40 @@ const styles = StyleSheet.create({
     },
     input: {
         fontSize: 16,
-        padding: 10,
+        padding: 5,
         borderRadius: 10,
-        marginHorizontal: 10,
         marginBottom: 5,
     },
     buttonZone: {
         flexDirection: 'row',
         alignSelf: 'center',
-        marginTop: 20,
-        padding: 10,
-        width: '85%',
+        width: width * 0.95,
         borderRadius: 10,
-        marginBottom: 10,
-        gap: 10,
+        padding: 15,
+        gap: 15,
     },
     calculateButton: {
-        flex: 1,
+        flex: 7,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
         borderRadius: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
         gap: 10,
     },
     resetButton: {
-        flex: 1,
+        flex: 3,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
+        paddingHorizontal: 10,
+        paddingVertical: 20,
         borderRadius: 10,
         gap: 10,
     },
     buttonText: {
-        textAlign: 'center',
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
     },
     resultContainer: {

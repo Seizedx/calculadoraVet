@@ -4,11 +4,11 @@ import * as Clipboard from 'expo-clipboard';
 import { useTheme } from './ThemeComponent';
 const { width, height } = Dimensions.get('window');
 
-export const CustomAlertCopy = ({ visible, title, patientAge, patientWeight,subTitle, message, onClose }) => {
+export const CustomAlertCopy = ({ visible, title, patientAge, patientWeight, subTitle, message, onClose }) => {
     const { currentTheme } = useTheme();
     const copyContent = async () => {
         try {
-            await Clipboard.setStringAsync(`${title}\n\n${message}`);
+            await Clipboard.setStringAsync(`${title}\n\n${subTitle}\n\n${message}`);
         } catch (error) {
             alert('Erro ao Copiar');
         }
@@ -32,10 +32,10 @@ export const CustomAlertCopy = ({ visible, title, patientAge, patientWeight,subT
                     </View>
                     <Text style={[styles.title, { color: currentTheme.color }]}>Detalhes - {title}</Text>
                     {patientAge && (
-                    <Text style={[styles.data, { color: currentTheme.color }]}>Idade: {patientAge} anos</Text>
+                        <Text style={[styles.data, { color: currentTheme.color }]}>Idade: {patientAge} anos</Text>
                     )}
                     {patientWeight && (
-                    <Text style={[styles.data, { color: currentTheme.color }]}>Peso: {patientWeight} kg(s)</Text>
+                        <Text style={[styles.data, { color: currentTheme.color }]}>Peso: {patientWeight} kg(s)</Text>
                     )}
                     <Text style={[styles.subTitle, { color: currentTheme.color }]}>{subTitle}</Text>
                     <Text style={[styles.message, { color: currentTheme.color }]}>{message}</Text>

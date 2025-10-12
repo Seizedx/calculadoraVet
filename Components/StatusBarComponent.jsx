@@ -1,4 +1,4 @@
-import { 
+import {
     StyleSheet,
     View,
     StatusBar,
@@ -7,15 +7,15 @@ import { useTheme } from '../Components/ThemeComponent';
 
 const StatusBarComponent = () => {
     const { currentTheme } = useTheme();
-        return (
-            <View style={styles.container}>
-                <StatusBar
+    return (
+        <View style={styles.container}>
+            <StatusBar
                 barStyle={currentTheme.barStyle}
                 // backgroundColor={currentTheme.statusBarBackgroundColor}
                 backgroundColor="transparent"
                 translucent={true}
-                />
-            </View>
+            />
+        </View>
 
     );
 }

@@ -14,7 +14,7 @@ import {
     Calculator
 } from 'lucide-react-native';
 import CustomTextInput from '../../../Components/CustomTextInput';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent, getFormattedDateTime } from '../../../Components/TopBarComponent';
 const { width, height } = Dimensions.get('window');
@@ -43,17 +43,6 @@ export default function InfusionRateCalculator() {
     useEffect(() => {
         setResult(null);
     }, [totalVolume, weight, infusionRate30Min, infusionRateRemaining, totalTimeRemaining]);
-
-    const saveToHistory = async (entry) => {
-        try {
-            const storedHistory = await AsyncStorage.getItem('calculationHistory');
-            const history = storedHistory ? JSON.parse(storedHistory) : [];
-            history.push(entry);
-            await AsyncStorage.setItem('calculationHistory', JSON.stringify(history));
-        } catch (error) {
-            Alert.alert('Error saving history:', error);
-        }
-    };
 
     const calculateInfusion = async () => {
         // Validar campos obrigatórios
@@ -165,52 +154,29 @@ export default function InfusionRateCalculator() {
             scrollViewRef.current?.scrollToEnd({ animated: true });
         }, 200);
 
-        //ASYNC STORAGE
-        const saveToHistory = async () => {
-            try {
-                const historyEntry = {
-                    patientName: patientName ?? 'Paciente Não Cadastrado',
-                    patientAge: patientAge ?? '',
-                    patientSpecies: patientRace ?? '',
-                    patientWeight: patientWeight ?? '',
-                    date: `${formattedDate}, ${formattedTime}`,///
-                    calculationType: 'Taxa de Infusão', /// alterados, o resto veio de result
-                    totalVolume: totalVolumeValue.toFixed(2),
-                    weight: weightValue.toFixed(2),
-                    infusionRate30Min: infusionRate30MinValue.toFixed(2),
-                    infusionRateRemaining: effectiveInfusionRateRemainingValue ? effectiveInfusionRateRemainingValue.toFixed(2) : '0.00',
-                    totalTimeRemaining: effectiveTotalTime.toFixed(2),
-                    volume30Min: volume30Min.toFixed(2),
-                    dropsPerMinute30Min: dropsPerMinute30Min.toFixed(2),
-                    dropsPerSecond30Min: dropsPerSecond30Min.toFixed(2),
-                    volumeRemaining: volumeRemaining.toFixed(2),
-                    infusionRatePerHour: infusionRatePerHour.toFixed(2),
-                    calculatedTimeRemaining: calculatedTimeRemaining.toFixed(2),
-                    dropsPerMinuteRemaining: dropsPerMinuteRemaining.toFixed(2),
-                    dropsPerSecondRemaining: dropsPerSecondRemaining.toFixed(2),
-                };
 
-                // Recupera histórico já salvo
-                const existingHistory = await AsyncStorage.getItem('calculationHistory');
-                let historyArray;
-
-                try {
-                    historyArray = existingHistory ? JSON.parse(existingHistory) : [];
-                    if (!Array.isArray(historyArray)) {
-                        historyArray = [historyArray];
-                    }
-                } catch (err) {
-                    historyArray = [];
-                }
-
-                historyArray.push(historyEntry);
-                await AsyncStorage.setItem('calculationHistory', JSON.stringify(historyArray));
-            } catch (error) {
-                console.error('Erro ao salvar o objeto:', error);
-            }
+        const historyEntry = {
+            patientName: patientName ?? 'Paciente Não Cadastrado',
+            patientAge: patientAge ?? '',
+            patientSpecies: patientRace ?? '',
+            patientWeight: patientWeight ?? '',
+            date: `${formattedDate}, ${formattedTime}`,///
+            calculationType: 'Taxa de Infusão', /// alterados, o resto veio de result
+            totalVolume: totalVolumeValue.toFixed(2),
+            weight: weightValue.toFixed(2),
+            infusionRate30Min: infusionRate30MinValue.toFixed(2),
+            infusionRateRemaining: effectiveInfusionRateRemainingValue ? effectiveInfusionRateRemainingValue.toFixed(2) : '0.00',
+            totalTimeRemaining: effectiveTotalTime.toFixed(2),
+            volume30Min: volume30Min.toFixed(2),
+            dropsPerMinute30Min: dropsPerMinute30Min.toFixed(2),
+            dropsPerSecond30Min: dropsPerSecond30Min.toFixed(2),
+            volumeRemaining: volumeRemaining.toFixed(2),
+            infusionRatePerHour: infusionRatePerHour.toFixed(2),
+            calculatedTimeRemaining: calculatedTimeRemaining.toFixed(2),
+            dropsPerMinuteRemaining: dropsPerMinuteRemaining.toFixed(2),
+            dropsPerSecondRemaining: dropsPerSecondRemaining.toFixed(2),
         };
-
-        saveToHistory();
+        AsyncStorageHistoryComponent('calculationHistory', historyEntry);
     };
 
 
@@ -367,7 +333,7 @@ const styles = StyleSheet.create({
     },
     inputLabel: {
         fontSize: 16,
-        marginBottom: 5,
+        textAlign: 'center',
     },
     centeredLabel: {
         textAlign: 'center',

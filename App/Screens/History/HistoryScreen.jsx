@@ -51,7 +51,7 @@ export const HistoryList = () => {
             backgroundColor: actualTheme === 'light' ? '#7f7d0050' : '#7f7d0030',
             location: 'PlateletCountHistory',
         },
-                {
+        {
             id: 3,
             title: 'Histórico de Índices Hematológicos',
             subtitle: 'Contagens',
@@ -115,12 +115,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 15,
         alignItems: 'center',
-    },
-    welcomeTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        textAlign: 'center',
     },
     welcomeSubtitle: {
         fontSize: 16,

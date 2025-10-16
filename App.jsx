@@ -5,30 +5,25 @@ import { ThemeProvider } from "./Components/ThemeComponent";
 import { AuthProvider } from "./Components/AuthComponent";
 import MainApp from "./App/MainApp";
 import AppLoader from "./Components/AppLoaderComponent";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardProvider } from "react-native-keyboard-controller";
+
 
 export default function App() {
     return (
         <AppLoader>
-            <KeyboardAwareScrollView
-                style={[styles.container, { backgroundColor: 'rgba(0, 0, 0, 0)' }]}
-                contentContainerStyle={{ flexGrow: 1 }}
-                enableOnAndroid={true}
-                extraScrollHeight={-50}
-                keyboardShouldPersistTaps="handled"
+            <SafeAreaView
+                style={styles.container}
+                edges={['right', 'bottom', 'left']}
             >
-                <SafeAreaView
-                    style={styles.container}
-                    edges={['right', 'bottom', 'left']}
-                >
-                    <AuthProvider>
-                        <ThemeProvider>
+                <AuthProvider>
+                    <ThemeProvider>
+                        <KeyboardProvider>
                             <StatusBarComponent />
                             <MainApp />
-                        </ThemeProvider>
-                    </AuthProvider>
-                </SafeAreaView>
-            </KeyboardAwareScrollView>
+                        </KeyboardProvider>
+                    </ThemeProvider>
+                </AuthProvider>
+            </SafeAreaView>
         </AppLoader>
     );
 }

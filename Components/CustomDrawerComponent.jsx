@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
     drawerLogin: {
         marginTop: 60,
         alignItems: 'center',
-        height: width * 0.6,
     },
     iconContainer: {
         width: 130,
@@ -125,7 +124,6 @@ const styles = StyleSheet.create({
         padding: 10,
         width: width * 0.55,
         borderRadius: 10,
-        marginBottom: 15,
     },
     buttonTextArea: {
         marginLeft: -35,
@@ -135,17 +133,12 @@ const styles = StyleSheet.create({
         gap: 20
     },
     buttonText: {
-        textAlign: 'center',
-        fontSize: 27,
-        fontWeight: 'bold',
-    },
-    buttonText: {
         fontSize: 17,
         fontWeight: 'bold',
     },
     themeButtonArea: {
         alignItems: 'flex-end',
-        marginTop: 20,
+        marginTop: 10,
         marginBottom: 10,
         paddingRight: 10,
     },

@@ -6,7 +6,6 @@ import {
     View,
     TouchableOpacity,
     Dimensions,
-    ScrollView,
     Alert
 } from 'react-native';
 import {
@@ -19,11 +18,13 @@ import { TopBarComponent } from '../../../Components/TopBarComponent';
 import { useAuth, authUser } from '../../../Components/AuthComponent';
 const { width, height } = Dimensions.get('window');
 import { resetToRoute } from '../../../Components/NavigationComponent';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const RecoverPassword = () => {
     const { currentTheme } = useTheme();
     const inputEmailRef = useRef(null);
     const inputPasswordRef = useRef(null);
+    const scrollViewRef = useRef(null);
     const [inputEmail, setInputEmail] = useState('');
     const navigation = useNavigation();
     const { forgotPassword } = useAuth();
@@ -44,18 +45,19 @@ const RecoverPassword = () => {
 
     return (
         <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
-            <ScrollView showsHorizontalScrollIndicator={false}>
+            <KeyboardAwareScrollView
+                bottomOffset={20}
+                contentContainerStyle={styles.scrollContainer}
+                ref={scrollViewRef}>
                 <TopBarComponent />
-                <View style={[styles.mainView, { backgroundColor: currentTheme.backgroundColor }]}>
-                    <View style={[styles.iconContainer, {
-                        backgroundColor: currentTheme.gradientB,
-                        borderColor: currentTheme.color,
-                    }]}>
-                        <User size={180} color={currentTheme.color} strokeWidth={2} />
-                    </View>
-
-                    <Text style={[styles.mainSubtitleText, { color: currentTheme.color }]}>Insira o Email da conta que deseja recuperar a senha.</Text>
+                <View style={[styles.iconContainer, {
+                    backgroundColor: currentTheme.gradientB,
+                    borderColor: currentTheme.color,
+                }]}>
+                    <User size={180} color={currentTheme.color} strokeWidth={2} />
                 </View>
+
+                <Text style={[styles.mainSubtitleText, { color: currentTheme.color }]}>Insira o Email da conta que deseja recuperar a senha.</Text>
                 <View style={styles.textInputArea}>
                     <Text style={[styles.textInputText, { color: currentTheme.color }]}>Email:</Text>
                     <TextInput
@@ -71,8 +73,8 @@ const RecoverPassword = () => {
                         onChangeText={(text) => {
                             setInputEmail(text)
                         }}
-                        keyboardType="text"
-                        returnKeyType="next"
+                        keyboardType="email-address"
+                        returnKeyType="done"
                         onSubmitEditing={() => inputPasswordRef.current?.focus()}
                     />
                     <TouchableOpacity
@@ -86,7 +88,7 @@ const RecoverPassword = () => {
                         </View>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
+            </KeyboardAwareScrollView>
         </View>
 
     );
@@ -96,9 +98,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    mainView: {
-        flex: 1,
-        marginBottom: 50,
+    scrollContainer: {
+        paddingBottom: 40,
     },
     iconContainer: {
         marginTop: 30,

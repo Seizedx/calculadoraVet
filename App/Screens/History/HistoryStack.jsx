@@ -1,7 +1,11 @@
 import { createStackNavigator } from '@react-navigation/stack';
+
 import CalculatorsHistory from './CalculatorsHistory';
 import PlateletCountHistory from './PlateletCountHistory';
 import HematologicalIndicesHistory from './HematologicalIndicesHistory';
+import WhiteBloodCellCountHistory from './WhiteBloodCellCountHistory';
+import CompleteBloodCountHistory from './CompleteBloodCountHistory';
+
 import { HistoryList } from './HistoryScreen';
 
 const Stack = createStackNavigator();
@@ -46,6 +50,22 @@ export const HistoryStack = () => {
             <Stack.Screen
                 name="HematologicalIndicesHistory"
                 component={HematologicalIndicesHistory}
+                initialParams={{
+                    title: 'Histórico de Índices Hematológicos',
+                    search: false,
+                }}
+            />
+            <Stack.Screen
+                name="WhiteBloodCellCountHistory"
+                component={WhiteBloodCellCountHistory}
+                initialParams={{
+                    title: 'Histórico de Índices Hematológicos',
+                    search: false,
+                }}
+            />
+            <Stack.Screen
+                name="CompleteBloodCountHistory"
+                component={CompleteBloodCountHistory}
                 initialParams={{
                     title: 'Histórico de Índices Hematológicos',
                     search: false,

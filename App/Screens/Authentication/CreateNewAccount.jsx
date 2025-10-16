@@ -6,7 +6,6 @@ import {
     View,
     TouchableOpacity,
     Dimensions,
-    ScrollView,
     Alert,
 } from 'react-native';
 import {
@@ -18,6 +17,7 @@ import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
 import { useAuth } from '../../../Components/AuthComponent';
 import { resetToRoute } from '../../../Components/NavigationComponent';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,6 +27,7 @@ const CreateNewAccount = () => {
     const inputEmailRef = useRef(null);
     const inputPasswordRef = useRef(null);
     const inputRepeatPasswordRef = useRef(null);
+    const scrollViewRef = useRef(null);
     const [inputEmail, setInputEmail] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const [inputRepeatPassword, setInputRepeatPassword] = useState('');
@@ -53,9 +54,11 @@ const CreateNewAccount = () => {
 
     return (
         <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
-            <ScrollView showsHorizontalScrollIndicator={false}>
+            <KeyboardAwareScrollView
+                bottomOffset={20}
+                contentContainerStyle={styles.scrollContainer}
+                ref={scrollViewRef}>
                 <TopBarComponent />
-                <View style={[styles.mainView, { backgroundColor: currentTheme.backgroundColor }]}>
                     <View style={[styles.iconContainer, {
                         backgroundColor: currentTheme.gradientB,
                         borderColor: currentTheme.color,
@@ -78,9 +81,12 @@ const CreateNewAccount = () => {
                             onChangeText={(text) => {
                                 setInputEmail(text)
                             }}
-                            keyboardType="text"
+                            keyboardType="email-address"
                             returnKeyType="next"
-                            onSubmitEditing={() => inputPasswordRef.current?.focus()}
+                            blurOnSubmit={false}
+                            onSubmitEditing={() => {
+                                inputPasswordRef.current?.focus();
+                            }}
                         />
                         <Text style={[styles.textInputText, { color: currentTheme.color }]}>Senha: </Text>
                         <View style={styles.textInputPasswordArea}>
@@ -97,13 +103,13 @@ const CreateNewAccount = () => {
                                 onChangeText={(text) => {
                                     setInputPassword(text)
                                 }}
-                                keyboardType="text"
+                                keyboardType="default"
                                 returnKeyType="next"
                                 secureTextEntry={!showPassword}
                                 autoCapitalize="none"
                                 autoCorrect={false}
+                                blurOnSubmit={false}
                                 onSubmitEditing={() => inputRepeatPasswordRef.current?.focus()}
-
                             />
                             <TouchableOpacity
                                 onPress={() => setShowPassword(!showPassword)}
@@ -127,7 +133,7 @@ const CreateNewAccount = () => {
                                 onChangeText={(text) => {
                                     setInputRepeatPassword(text)
                                 }}
-                                keyboardType="text"
+                                keyboardType="default"
                                 returnKeyType="done"
                                 secureTextEntry={!showPassword}
                                 autoCapitalize="none"
@@ -150,10 +156,8 @@ const CreateNewAccount = () => {
                                 <Text style={[styles.buttonText, { color: currentTheme.color }]}>Criar Conta</Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={{ marginBottom: 50 }}></View>
                     </View>
-                </View>
-            </ScrollView>
+            </KeyboardAwareScrollView>
         </View>
     );
 }
@@ -162,9 +166,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    mainView: {
-        flex: 1,
-        marginBottom: 50,
+    scrollContainer: {
+        paddingBottom: 40,
     },
     iconContainer: {
         marginTop: 30,

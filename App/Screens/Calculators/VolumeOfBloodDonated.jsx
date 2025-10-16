@@ -8,7 +8,7 @@ import {
     ScrollView,
     Keyboard,
     Alert,
-    Dimensions
+    Dimensions,
 } from 'react-native';
 import {
     Calculator
@@ -18,6 +18,7 @@ import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHi
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent, getFormattedDateTime } from '../../../Components/TopBarComponent';
 const { width, height } = Dimensions.get('window');
+
 
 export default function CPDAVolumeCalculator() {
     let patientName; ////////////////////////////////////////TEMPORÁRIO, ATÉ FAZER O COMPONENT
@@ -273,7 +274,7 @@ export default function CPDAVolumeCalculator() {
                             if (containerType === 'Seringa') {
                                 syringeInputRef.current?.focus();
                             } else {
-                                customVolumeInputRef.current?.focus();
+                                Keyboard.dismiss();
                             }
                         }}
                     />
@@ -346,6 +347,7 @@ export default function CPDAVolumeCalculator() {
                         onChangeText={setCustomVolume}
                         placeholder="Valor Personalizado (em mL)"
                         keyboardType="numeric"
+                        returnKeyType="done"
                     />
                 </View>
                 <TouchableOpacity

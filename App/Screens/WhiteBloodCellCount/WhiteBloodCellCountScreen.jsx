@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { TopBarComponent, getFormattedDateTime, scrollToResult } from '../../../Components/TopBarComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import CustomTextInput from '../../../Components/CustomTextInput';
 import { useState, useRef } from 'react';
 import { Calculator, Info, RotateCcw } from 'lucide-react-native';
@@ -19,6 +20,14 @@ const { width, height } = Dimensions.get('window');
 
 export const WhiteBloodCellCountScreen = () => {
     const { currentTheme } = useTheme();
+
+
+
+    // Dados fictícios para log (substitua por dados reais se necessário)
+    const patientName = '';
+    const patientAge = '';
+    const patientRace = '';
+    const patientWeight = '';
     const { formattedDate, formattedTime } = getFormattedDateTime();
 
     const [selectedSpecies, setSelectedSpecies] = useState('dog');
@@ -88,6 +97,24 @@ export const WhiteBloodCellCountScreen = () => {
         setTimeout(() => {
             scrollToResult(scrollViewRef, resultViewRef);
         }, 200);
+
+        const historyEntry = {
+            patientName: patientName || 'Paciente Não Cadastrado',
+            patientAge: patientAge || '',
+            patientSpecies: patientRace || '',
+            patientWeight: patientWeight || '',
+            date: `${formattedDate}, ${formattedTime}`,
+            calculationType: 'Leucograma',
+            totalWBC: total.toFixed(2),
+            neutrophils: { percentage: values.neutrophils.toFixed(1), absolute: neutrophilsAbs.toFixed(0) },
+            lymphocytes: { percentage: values.lymphocytes.toFixed(1), absolute: lymphocytesAbs.toFixed(0) },
+            monocytes: { percentage: values.monocytes.toFixed(1), absolute: monocytesAbs.toFixed(0) },
+            eosinophils: { percentage: values.eosinophils.toFixed(1), absolute: eosinophilsAbs.toFixed(0) },
+            basophils: { percentage: values.basophils.toFixed(1), absolute: basophilsAbs.toFixed(0) },
+            totalPercentage: totalPercentage.toFixed(1),
+        };
+
+        AsyncStorageHistoryComponent('WhiteBloodCellCountHistory', historyEntry);
     };
 
     const resetForm = () => {

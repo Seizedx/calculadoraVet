@@ -18,6 +18,7 @@ import {
     Cat,
 } from 'lucide-react-native';
 import { TopBarComponent, getFormattedDateTime, scrollToResult } from '../../../Components/TopBarComponent';
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import CustomTextInput from '../../../Components/CustomTextInput';
 import { useTheme } from '../../../Components/ThemeComponent';
 
@@ -25,6 +26,14 @@ const { width } = Dimensions.get('window');
 
 export default function CompleteBloodCountScreen() {
     const { currentTheme } = useTheme();
+
+
+    
+    // Dados fictícios para log (substitua por dados reais se necessário)
+    const patientName = '';
+    const patientAge = '';
+    const patientRace = '';
+    const patientWeight = '';
     const { formattedDate, formattedTime } = getFormattedDateTime();
 
 
@@ -260,6 +269,47 @@ export default function CompleteBloodCountScreen() {
         setTimeout(() => {
             scrollToResult(scrollViewRef, resultViewRef);
         }, 200);
+
+        const historyEntry = {
+            patientName: patientName || 'Paciente Não Cadastrado',
+            patientAge: patientAge || '',
+            patientSpecies: patientRace || '',
+            patientWeight: patientWeight || '',
+            date: `${formattedDate}, ${formattedTime}`,
+            calculationType: 'Hemograma Completo',
+                        hematocrit: hct.toFixed(1),
+            hemoglobin: hgb.toFixed(1),
+            rbc: (rbcMillions).toFixed(2),
+            wbc: Math.round(wbc).toString(),
+            platelets: Math.round(platelets).toString(),
+            rdw: rdw.trim() ? parseFloat(rdw).toFixed(1) + '%' : null,
+            mcv: mcv.toFixed(2),
+            mch: mch.toFixed(2),
+            mchc: mchc.toFixed(2),
+            neutrophils: {
+                percentage: pctNeut.toFixed(1),
+                absolute: neutAbs.toString(),
+            },
+            lymphocytes: {
+                percentage: pctLymph.toFixed(1),
+                absolute: lymphAbs.toString(),
+            },
+            monocytes: {
+                percentage: pctMono.toFixed(1),
+                absolute: monoAbs.toString(),
+            },
+            eosinophils: {
+                percentage: pctEos.toFixed(1),
+                absolute: eosAbs.toString(),
+            },
+            basophils: {
+                percentage: pctBaso.toFixed(1),
+                absolute: basoAbs.toString(),
+            },
+            totalLeukocytePercentage: totalPct.toFixed(1),
+        };
+
+        AsyncStorageHistoryComponent('CompleteBloodCountHistory', historyEntry);
     };
 
     const resetForm = () => {

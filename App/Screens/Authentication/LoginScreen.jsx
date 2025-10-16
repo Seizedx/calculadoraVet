@@ -6,7 +6,6 @@ import {
     View,
     TouchableOpacity,
     Dimensions,
-    ScrollView,
     Image,
 } from 'react-native';
 import {
@@ -18,6 +17,7 @@ import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent } from '../../../Components/TopBarComponent';
 import { useAuth } from '../../../Components/AuthComponent';
 import { resetToRoute } from '../../../Components/NavigationComponent';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,6 +26,7 @@ const LoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false);
     const inputEmailRef = useRef(null);
     const inputPasswordRef = useRef(null);
+    const scrollViewRef = useRef(null);
     const [inputEmail, setInputEmail] = useState('');
     const [inputPassword, setInputPassword] = useState('');
     const navigation = useNavigation();
@@ -48,106 +49,107 @@ const LoginScreen = () => {
 
     return (
         <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
-            <ScrollView showsHorizontalScrollIndicator={false}>
+            <KeyboardAwareScrollView
+                bottomOffset={20}
+                contentContainerStyle={styles.scrollContainer}
+                ref={scrollViewRef}>
                 <TopBarComponent />
-                <View style={[styles.mainView, { backgroundColor: currentTheme.backgroundColor }]}>
-                    <View style={[styles.iconContainer, {
-                        backgroundColor: currentTheme.gradientB,
-                        borderColor: currentTheme.color,
-                    }]}>
-                        <User size={180} color={currentTheme.color} strokeWidth={2} />
-                    </View>
-                    <Text style={[styles.mainSubtitleText, { color: currentTheme.color }]}>Para mais opções, entre em sua conta.</Text>
-                    <View style={styles.textInputArea}>
-                        <Text style={[styles.textInputText, { color: currentTheme.color }]}>Email:</Text>
+                <View style={[styles.iconContainer, {
+                    backgroundColor: currentTheme.gradientB,
+                    borderColor: currentTheme.color,
+                }]}>
+                    <User size={180} color={currentTheme.color} strokeWidth={2} />
+                </View>
+                <Text style={[styles.mainSubtitleText, { color: currentTheme.color }]}>Para mais opções, entre em sua conta.</Text>
+                <View style={styles.textInputArea}>
+                    <Text style={[styles.textInputText, { color: currentTheme.color }]}>Email:</Text>
+                    <TextInput
+                        scrollEnabled={false}
+                        multiline={false}
+                        textAlign="center"
+                        style={[styles.textInput, { color: currentTheme.color }]}
+                        ref={inputEmailRef}
+                        placeholder='Digite seu@email.com'
+                        placeholderTextColor={currentTheme.inactiveTintColor}
+                        value={inputEmail}
+                        underlineColorAndroid='transparent'
+                        onChangeText={(text) => {
+                            setInputEmail(text)
+                        }}
+                        keyboardType="email-address"
+                        returnKeyType="next"
+                        blurOnSubmit={false}
+                        onSubmitEditing={() => inputPasswordRef.current?.focus()}
+                    />
+                    <Text style={[styles.textInputText, { color: currentTheme.color }]}>Senha: </Text>
+                    <View style={styles.textInputPasswordArea}>
                         <TextInput
                             scrollEnabled={false}
                             multiline={false}
                             textAlign="center"
                             style={[styles.textInput, { color: currentTheme.color }]}
-                            ref={inputEmailRef}
-                            placeholder='Digite seu@email.com'
+                            ref={inputPasswordRef}
+                            placeholder='Digite sua senha'
                             placeholderTextColor={currentTheme.inactiveTintColor}
-                            value={inputEmail}
+                            value={inputPassword}
                             underlineColorAndroid='transparent'
                             onChangeText={(text) => {
-                                setInputEmail(text)
+                                setInputPassword(text)
                             }}
-                            keyboardType="text"
-                            returnKeyType="next"
-                            onSubmitEditing={() => inputPasswordRef.current?.focus()}
+                            keyboardType="default"
+                            returnKeyType="done"
+                            secureTextEntry={!showPassword}
+                            autoCapitalize="none"
+                            autoCorrect={false}
                         />
-                        <Text style={[styles.textInputText, { color: currentTheme.color }]}>Senha: </Text>
-                        <View style={styles.textInputPasswordArea}>
-                            <TextInput
-                                scrollEnabled={false}
-                                multiline={false}
-                                textAlign="center"
-                                style={[styles.textInput, { color: currentTheme.color }]}
-                                ref={inputPasswordRef}
-                                placeholder='Digite sua senha'
-                                placeholderTextColor={currentTheme.inactiveTintColor}
-                                value={inputPassword}
-                                underlineColorAndroid='transparent'
-                                onChangeText={(text) => {
-                                    setInputPassword(text)
-                                }}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                secureTextEntry={!showPassword}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                            />
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setShowPassword(!showPassword)
-                                }}
-                                // onPressIn={() => setShowPassword(true)}
-                                // onPressOut={() => setShowPassword(false)}
-                                style={styles.togglePasswordButton}
-                            >
-                                <Text style={styles.textShowPass}>{showPassword ? '🙉' : '🙈'}</Text>
-                            </TouchableOpacity>
-                        </View>
                         <TouchableOpacity
-                            style={[styles.buttonZone, { backgroundColor: currentTheme.buttonColor }]}
-                            activeOpacity={0.3}
-                            onPress={loginUserButton}
+                            onPress={() => {
+                                setShowPassword(!showPassword)
+                            }}
+                            // onPressIn={() => setShowPassword(true)}
+                            // onPressOut={() => setShowPassword(false)}
+                            style={styles.togglePasswordButton}
                         >
-                            <View style={styles.buttonTextArea}>
-                                <LogIn size={25} color={currentTheme.color} strokeWidth={3} />
-                                <Text style={[styles.buttonText, { color: currentTheme.color }]}>Entrar</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.optionsArea}
-                            activeOpacity={0.3}
-                            onPress={() => navigation.navigate('RecoverPassword')}
-                        >
-                            <Text style={[styles.optionsText, { color: currentTheme.color }]}>Esqueceu sua Senha?</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.optionsArea}
-                            activeOpacity={0.3}
-                            onPress={() => navigation.navigate('CreateNewAccount')}
-                        >
-                            <Text style={[styles.optionsText, { color: currentTheme.color }]}>Não está cadastrado? Cadastrar.</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.googleSignInArea, { borderColor: currentTheme.color }]}
-                            activeOpacity={0.3}
-                            onPress={loginWithGoogle}
-                        >
-                            <Image
-                                source={require('../../../src/images/googleLogo.png')}
-                                style={styles.googleSignInImg}
-                            />
-                            <Text style={[styles.googleSingInText, { color: currentTheme.color }]}>Entrar com o Google</Text>
+                            <Text style={styles.textShowPass}>{showPassword ? '🙉' : '🙈'}</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ marginBottom: 50 }}></View>
+                    <TouchableOpacity
+                        style={[styles.buttonZone, { backgroundColor: currentTheme.buttonColor }]}
+                        activeOpacity={0.3}
+                        onPress={loginUserButton}
+                    >
+                        <View style={styles.buttonTextArea}>
+                            <LogIn size={25} color={currentTheme.color} strokeWidth={3} />
+                            <Text style={[styles.buttonText, { color: currentTheme.color }]}>Entrar</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.optionsArea}
+                        activeOpacity={0.3}
+                        onPress={() => navigation.navigate('RecoverPassword')}
+                    >
+                        <Text style={[styles.optionsText, { color: currentTheme.color }]}>Esqueceu sua Senha?</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.optionsArea}
+                        activeOpacity={0.3}
+                        onPress={() => navigation.navigate('CreateNewAccount')}
+                    >
+                        <Text style={[styles.optionsText, { color: currentTheme.color }]}>Não está cadastrado? Cadastrar.</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.googleSignInArea, { borderColor: currentTheme.color }]}
+                        activeOpacity={0.3}
+                        onPress={loginWithGoogle}
+                    >
+                        <Image
+                            source={require('../../../src/images/googleLogo.png')}
+                            style={styles.googleSignInImg}
+                        />
+                        <Text style={[styles.googleSingInText, { color: currentTheme.color }]}>Entrar com o Google</Text>
+                    </TouchableOpacity>
                 </View>
-            </ScrollView>
+            </KeyboardAwareScrollView>
         </View>
 
     );
@@ -157,9 +159,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    mainView: {
-        flex: 1,
-        marginBottom: 50,
+    scrollContainer: {
+        paddingBottom: 40,
     },
     iconContainer: {
         marginTop: 30,

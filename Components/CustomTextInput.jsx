@@ -21,6 +21,7 @@ const CustomTextInput = forwardRef(({
     keyboardType = 'default',
     style,
     returnKeyType = 'done',
+    blurOnSubmit,
     onSubmitEditing,
 }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
@@ -51,6 +52,7 @@ const CustomTextInput = forwardRef(({
                     scrollEnabled={false}
                     multiline={false}
                     textAlign="center"
+                    blurOnSubmit={blurOnSubmit}
                     onFocus={handleFocus}
                     onBlur={() => setIsFocused(false)}
                     returnKeyType={returnKeyType}

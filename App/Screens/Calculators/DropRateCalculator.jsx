@@ -13,6 +13,7 @@ import {
 import {
     Calculator
 } from 'lucide-react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import CustomTextInput from '../../../Components/CustomTextInput';
 import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
@@ -183,10 +184,9 @@ export default function InfusionRateCalculator() {
 
     return (
         <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                ref={scrollViewRef}
-            >
+            <KeyboardAwareScrollView
+                bottomOffset={20}
+                ref={scrollViewRef}>
                 <TopBarComponent />
                 <View style={styles.welcomeSection}>
                     <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
@@ -204,6 +204,7 @@ export default function InfusionRateCalculator() {
                         onChangeText={setTotalVolume}
                         placeholder="Volume (em mL)"
                         keyboardType="numeric"
+                        blurOnSubmit={false}
                         returnKeyType="next"
                         onSubmitEditing={() => weightInputRef.current?.focus()}
                     />
@@ -219,6 +220,7 @@ export default function InfusionRateCalculator() {
                         onChangeText={setWeight}
                         placeholder="Peso (em kg)"
                         keyboardType="numeric"
+                        blurOnSubmit={false}
                         returnKeyType="next"
                         onSubmitEditing={() => infusionRate30MinInputRef.current?.focus()}
                     />
@@ -235,6 +237,7 @@ export default function InfusionRateCalculator() {
                         onChangeText={setInfusionRate30Min}
                         placeholder="Taxa (em mL/kg/h)"
                         keyboardType="numeric"
+                        blurOnSubmit={false}
                         returnKeyType="next"
                         onSubmitEditing={() => infusionRateRemainingInputRef.current?.focus()}
                     />
@@ -257,6 +260,7 @@ export default function InfusionRateCalculator() {
                         onChangeText={setInfusionRateRemaining}
                         placeholder="Taxa (em mL/kg/h)"
                         keyboardType="numeric"
+                        blurOnSubmit={false}
                         returnKeyType="next"
                         onSubmitEditing={() => totalTimeRemainingInputRef.current?.focus()}
                     />
@@ -272,6 +276,7 @@ export default function InfusionRateCalculator() {
                         onChangeText={setTotalTimeRemaining}
                         placeholder="Tempo (em horas)"
                         keyboardType="numeric"
+                        blurOnSubmit={true}
                         returnKeyType="done"
                     />
                     <Text style={[styles.referenceText, { marginBottom: 0 }]}>Valor Padrão e Limite: 3.5 horas.</Text>
@@ -309,7 +314,7 @@ export default function InfusionRateCalculator() {
                         <Text style={styles.resultNote}>Verificar se Valores de CPDA Foram Incluídos</Text>
                     </View>
                 )}
-            </ScrollView >
+            </KeyboardAwareScrollView >
         </View >
     );
 }

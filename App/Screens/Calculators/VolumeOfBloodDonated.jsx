@@ -1,11 +1,9 @@
-// Components/VolumeOfBloodDonated.js
 import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     Text,
     TouchableOpacity,
     StyleSheet,
-    ScrollView,
     Keyboard,
     Alert,
     Dimensions,
@@ -13,6 +11,7 @@ import {
 import {
     Calculator
 } from 'lucide-react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import CustomTextInput from '../../../Components/CustomTextInput';
 import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
@@ -249,10 +248,9 @@ export default function CPDAVolumeCalculator() {
 
     return (
         <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                ref={scrollViewRef}
-            >
+            <KeyboardAwareScrollView
+                bottomOffset={20}
+                ref={scrollViewRef}>
                 <TopBarComponent />
                 <View style={styles.welcomeSection}>
                     <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
@@ -270,6 +268,7 @@ export default function CPDAVolumeCalculator() {
                         placeholder="Peso (em kg)"
                         keyboardType="numeric"
                         returnKeyType="next"
+                        blurOnSubmit={false}
                         onSubmitEditing={() => {
                             if (containerType === 'Seringa') {
                                 syringeInputRef.current?.focus();
@@ -298,6 +297,7 @@ export default function CPDAVolumeCalculator() {
                             placeholder="Tamanho (em mL)"
                             keyboardType="numeric"
                             returnKeyType="done"
+                            blurOnSubmit={true}
                             style={styles.smallInput}
                             editable={containerType === 'Seringa'}
                         />
@@ -361,7 +361,7 @@ export default function CPDAVolumeCalculator() {
                     </View>
                 </TouchableOpacity>
                 {!result && (
-                    <View style={{ marginBottom: 50 }}></View>
+                    <View style={{ marginBottom: 40 }}></View>
                 )}
                 {result && (
                     <View style={[styles.resultContainer, { backgroundColor: currentTheme.resultBackgroundColor }]}>
@@ -464,7 +464,7 @@ export default function CPDAVolumeCalculator() {
                     </View>
                 )
                 }
-            </ScrollView >
+            </KeyboardAwareScrollView>
         </View >
     );
 }

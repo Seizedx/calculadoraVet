@@ -4,7 +4,6 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    ScrollView,
     Keyboard,
     Alert,
     Dimensions
@@ -12,10 +11,11 @@ import {
 import {
     Calculator
 } from 'lucide-react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import CustomTextInput from '../../../Components/CustomTextInput';
 import { useTheme } from '../../../Components/ThemeComponent';
 import { TopBarComponent, getFormattedDateTime } from '../../../Components/TopBarComponent';
-import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent'
+import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 const { width, height } = Dimensions.get('window');
 
 export default function CPDAVolumeCalculator() {
@@ -121,10 +121,9 @@ export default function CPDAVolumeCalculator() {
 
     return (
         <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                ref={scrollViewRef}
-            >
+            <KeyboardAwareScrollView
+                bottomOffset={20}
+                ref={scrollViewRef}>
                 <TopBarComponent />
                 <View style={styles.welcomeSection}>
                     <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
@@ -140,6 +139,7 @@ export default function CPDAVolumeCalculator() {
                         placeholder="Volume (em mL)"
                         keyboardType="numeric"
                         returnKeyType="next"
+                        blurOnSubmit={false}
                         onSubmitEditing={() => {
                             if (containerType === 'Seringa') {
                                 syringeInputRef.current?.focus();
@@ -166,6 +166,7 @@ export default function CPDAVolumeCalculator() {
                             placeholder="Tamanho (em mL)"
                             keyboardType="numeric"
                             returnKeyType="done"
+                            blurOnSubmit={true}
                             style={styles.smallInput}
                             editable={containerType === 'Seringa'}
                             onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
@@ -195,7 +196,7 @@ export default function CPDAVolumeCalculator() {
                     </View>
                 </TouchableOpacity>
                 {!result && (
-                    <View style={{ marginBottom: 50 }}></View>
+                    <View style={{ marginBottom: 40 }}></View>
                 )}
 
                 {result && (
@@ -228,7 +229,7 @@ export default function CPDAVolumeCalculator() {
                         <Text style={styles.resultNote}>Proporção: 1mL sangue : 0.14mL CPDA</Text>
                     </View>
                 )}
-            </ScrollView >
+            </KeyboardAwareScrollView >
         </View >
     );
 }

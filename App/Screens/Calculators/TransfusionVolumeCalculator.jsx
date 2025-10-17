@@ -13,6 +13,7 @@ import {
 import {
     Calculator
 } from 'lucide-react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import CustomTextInput from '../../../Components/CustomTextInput';
 import { AsyncStorageHistoryComponent } from '../../../Components/AsyncStorageHistoryComponent';
 import { useTheme } from '../../../Components/ThemeComponent';
@@ -114,10 +115,9 @@ export default function TransfusionVolumeCalculator() {
 
     return (
         <View style={[styles.container, { backgroundColor: currentTheme.backgroundColor }]}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                ref={scrollViewRef}
-            >
+            <KeyboardAwareScrollView
+                bottomOffset={20}
+                ref={scrollViewRef}>
                 <TopBarComponent />
                 <View style={styles.welcomeSection}>
                     <Text style={[styles.welcomeSubtitle, { color: currentTheme.color }]}>
@@ -134,6 +134,7 @@ export default function TransfusionVolumeCalculator() {
                         onChangeText={setAnimalWeight}
                         placeholder="Peso (em kg)"
                         keyboardType="numeric"
+                        blurOnSubmit={false}
                         returnKeyType="next"
                         onSubmitEditing={() => {
                             desiredHematocritInputRef.current?.focus();
@@ -150,6 +151,7 @@ export default function TransfusionVolumeCalculator() {
                         onChangeText={setDesiredHematocrit}
                         placeholder="Hematócrito (em %)"
                         keyboardType="numeric"
+                        blurOnSubmit={false}
                         returnKeyType="next"
                         onSubmitEditing={() => {
                             currentHematocritInputRef.current?.focus();
@@ -166,6 +168,7 @@ export default function TransfusionVolumeCalculator() {
                         onChangeText={setCurrentHematocrit}
                         placeholder="Hematócrito (em %)"
                         keyboardType="numeric"
+                        blurOnSubmit={false}
                         returnKeyType="next"
                         onSubmitEditing={() => {
                             donorHematocritInputRef.current?.focus();
@@ -182,6 +185,7 @@ export default function TransfusionVolumeCalculator() {
                         onChangeText={setDonorHematocrit}
                         placeholder="Hematócrito (em %)"
                         keyboardType="numeric"
+                        blurOnSubmit={true}
                         returnKeyType="done"
                     />
                 </View>
@@ -220,7 +224,7 @@ export default function TransfusionVolumeCalculator() {
                     </View>
                 </TouchableOpacity>
                 {!result && (
-                    <View style={{ marginBottom: 50 }}></View>
+                    <View style={{ marginBottom: 40 }}></View>
                 )}
                 {result && (
                     <View style={[styles.resultContainer, { backgroundColor: currentTheme.resultBackgroundColor }]}>
@@ -244,7 +248,7 @@ export default function TransfusionVolumeCalculator() {
                         </Text>
                     </View>
                 )}
-            </ScrollView >
+            </KeyboardAwareScrollView >
         </View >
     );
 }
